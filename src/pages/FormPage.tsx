@@ -71,6 +71,13 @@ const FormPage: React.FC = () => {
       return;
     }
     
+    // Special case for currently insured = No, skip carrier and go to credit score
+    if (currentStep === 3 && value === 'No') {
+      // Skip the carrier step (4) and go directly to credit score (5)
+      setCurrentStep(4);
+      return;
+    }
+    
     // Auto-advance for all other options
     if (currentStep < getTotalSteps()) {
       nextStep();
@@ -132,10 +139,10 @@ const FormPage: React.FC = () => {
 
   // Render current form step
   const renderStep = () => {
-    // Adjust step numbers based on whether we have the carrier selection step
-    const hasCarrierStep = formState.currentlyInsured === 'Yes';
+    // Get adjusted step based on the currentlyInsured value
+    const effectiveStep = formState.currentlyInsured === 'No' && currentStep > 3 ? currentStep + 1 : currentStep;
     
-    switch (currentStep) {
+    switch (effectiveStep) {
       case 1: // Vehicle Count
         return (
           <div className="animate-fade-in">
@@ -293,9 +300,48 @@ const FormPage: React.FC = () => {
             </div>
           );
         }
-        // If not insured, this step should be skipped and we fall through to the next step
-        return renderStep(); // Recursively call to get the next step
-      
+        // If we reach this step and the user is not insured, render the credit score step instead
+        return (
+          <div className="animate-fade-in">
+            <h2 className="text-2xl font-bold mb-8 text-center">What's your credit score?</h2>
+            <div className="space-y-4">
+              <OptionCard
+                option="Excellent"
+                value="Excellent"
+                selected={formState.creditScore === 'Excellent'}
+                onClick={() => handleOptionSelect(setCreditScore, 'Excellent')}
+              />
+              <OptionCard
+                option="Good"
+                value="Good"
+                selected={formState.creditScore === 'Good'}
+                onClick={() => handleOptionSelect(setCreditScore, 'Good')}
+              />
+              <OptionCard
+                option="Fair"
+                value="Fair"
+                selected={formState.creditScore === 'Fair'}
+                onClick={() => handleOptionSelect(setCreditScore, 'Fair')}
+              />
+              <OptionCard
+                option="Poor"
+                value="Poor"
+                selected={formState.creditScore === 'Poor'}
+                onClick={() => handleOptionSelect(setCreditScore, 'Poor')}
+              />
+            </div>
+            <div className="mt-8 flex justify-between">
+              <Button 
+                variant="outline" 
+                onClick={prevStep}
+                className="border-brand-300 text-brand-500 hover:bg-brand-50"
+              >
+                Back
+              </Button>
+            </div>
+          </div>
+        );
+        
       case 5: // Credit Score
         return (
           <div className="animate-fade-in">

@@ -87,16 +87,26 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const nextStep = () => {
-    setCurrentStep(prev => prev + 1);
+    // Skip carrier selection step if user is not insured
+    if (currentStep === 3 && formState.currentlyInsured === 'No') {
+      setCurrentStep(prev => prev + 2);
+    } else {
+      setCurrentStep(prev => prev + 1);
+    }
   };
 
   const prevStep = () => {
-    setCurrentStep(prev => Math.max(1, prev - 1));
+    // Handle going back when coming from after the carrier step
+    if (currentStep === 5 && formState.currentlyInsured === 'No') {
+      setCurrentStep(3); // Go back to currently insured question
+    } else {
+      setCurrentStep(prev => Math.max(1, prev - 1));
+    }
   };
 
   const getTotalSteps = () => {
     // Total steps depends on whether user is currently insured
-    return formState.currentlyInsured === 'Yes' ? 7 : 7;
+    return formState.currentlyInsured === 'Yes' ? 7 : 6;
   };
 
   const isFormComplete = () => {
