@@ -30,6 +30,7 @@ interface FormContextType {
   nextStep: () => void;
   prevStep: () => void;
   isFormComplete: () => boolean;
+  getTotalSteps: () => number;
 }
 
 const initialState: FormState = {
@@ -93,6 +94,11 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCurrentStep(prev => Math.max(1, prev - 1));
   };
 
+  const getTotalSteps = () => {
+    // If user is currently insured, include the carrier selection step
+    return formState.currentlyInsured === 'Yes' ? 8 : 7;
+  };
+
   const isFormComplete = () => {
     // Check if all required fields are filled
     const { vehicleCount, homeowner, currentlyInsured, creditScore, militaryAffiliation, zipCode } = formState;
@@ -130,6 +136,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         nextStep,
         prevStep,
         isFormComplete,
+        getTotalSteps,
       }}
     >
       {children}

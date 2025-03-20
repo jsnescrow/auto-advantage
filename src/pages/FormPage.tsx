@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import ProgressBar from '@/components/ProgressBar';
@@ -9,7 +9,6 @@ import LoadingAnimation from '@/components/LoadingAnimation';
 import { useFormContext } from '@/context/FormContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { fetchWithRetry } from '@/utils/api';
 
@@ -41,8 +40,10 @@ const FormPage: React.FC = () => {
     setMilitaryAffiliation,
     setZipCode,
     currentStep,
+    setCurrentStep,
     nextStep,
     prevStep,
+    getTotalSteps,
   } = useFormContext();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +58,22 @@ const FormPage: React.FC = () => {
     setCreditScore('Good');
     setMilitaryAffiliation('No');
     setZipCode('15014');
+  };
+
+  // Auto-advance handler for options
+  const handleOptionSelect = (setter: Function, value: any) => {
+    setter(value);
+    
+    // For currently insured = Yes, don't auto-advance; we'll show the carrier selection step
+    if (currentStep === 3 && value === 'Yes') {
+      nextStep();
+      return;
+    }
+    
+    // Auto-advance for all other options
+    if (currentStep < (formState.currentlyInsured === 'Yes' ? 8 : 7)) {
+      nextStep();
+    }
   };
 
   // Handle zip code validation
@@ -99,11 +116,11 @@ const FormPage: React.FC = () => {
 
   // Handle continuing to next step
   const handleContinue = () => {
-    if (currentStep === 5) { // Zip code step
+    if (currentStep === 6) { // Zip code step
       if (!validateZip()) return;
     }
     
-    if (currentStep === 7) { // Final step
+    if (currentStep === (formState.currentlyInsured === 'Yes' ? 8 : 7)) { // Final step
       handleSubmit();
       return;
     }
@@ -113,6 +130,10 @@ const FormPage: React.FC = () => {
 
   // Render current form step
   const renderStep = () => {
+    // Adjust step numbers based on whether we have the carrier selection step
+    const hasCarrierStep = formState.currentlyInsured === 'Yes';
+    const adjustedStep = currentStep > 3 && hasCarrierStep ? currentStep - 1 : currentStep;
+    
     switch (currentStep) {
       case 1: // Vehicle Count
         return (
@@ -123,7 +144,7 @@ const FormPage: React.FC = () => {
                 option="One"
                 value="1"
                 selected={formState.vehicleCount === '1'}
-                onClick={() => setVehicleCount('1')}
+                onClick={() => handleOptionSelect(setVehicleCount, '1')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
@@ -134,7 +155,7 @@ const FormPage: React.FC = () => {
                 option="Two"
                 value="2"
                 selected={formState.vehicleCount === '2'}
-                onClick={() => setVehicleCount('2')}
+                onClick={() => handleOptionSelect(setVehicleCount, '2')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
@@ -145,22 +166,13 @@ const FormPage: React.FC = () => {
                 option="Three +"
                 value="3+"
                 selected={formState.vehicleCount === '3+'}
-                onClick={() => setVehicleCount('3+')}
+                onClick={() => handleOptionSelect(setVehicleCount, '3+')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                   </svg>
                 }
               />
-            </div>
-            <div className="mt-8 text-center">
-              <Button 
-                onClick={handleContinue} 
-                disabled={!formState.vehicleCount}
-                className="w-full bg-brand-500 hover:bg-brand-600 text-white"
-              >
-                Continue
-              </Button>
             </div>
           </div>
         );
@@ -174,7 +186,7 @@ const FormPage: React.FC = () => {
                 option="Yes"
                 value="Yes"
                 selected={formState.homeowner === 'Yes'}
-                onClick={() => setHomeowner('Yes')}
+                onClick={() => handleOptionSelect(setHomeowner, 'Yes')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -185,7 +197,7 @@ const FormPage: React.FC = () => {
                 option="No"
                 value="No"
                 selected={formState.homeowner === 'No'}
-                onClick={() => setHomeowner('No')}
+                onClick={() => handleOptionSelect(setHomeowner, 'No')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -200,13 +212,6 @@ const FormPage: React.FC = () => {
                 className="border-brand-300 text-brand-500 hover:bg-brand-50"
               >
                 Back
-              </Button>
-              <Button 
-                onClick={handleContinue}
-                disabled={!formState.homeowner}
-                className="bg-brand-500 hover:bg-brand-600 text-white"
-              >
-                Continue
               </Button>
             </div>
           </div>
@@ -221,7 +226,7 @@ const FormPage: React.FC = () => {
                 option="Yes"
                 value="Yes"
                 selected={formState.currentlyInsured === 'Yes'}
-                onClick={() => setCurrentlyInsured('Yes')}
+                onClick={() => handleOptionSelect(setCurrentlyInsured, 'Yes')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -232,7 +237,7 @@ const FormPage: React.FC = () => {
                 option="No"
                 value="No"
                 selected={formState.currentlyInsured === 'No'}
-                onClick={() => setCurrentlyInsured('No')}
+                onClick={() => handleOptionSelect(setCurrentlyInsured, 'No')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -240,30 +245,6 @@ const FormPage: React.FC = () => {
                 }
               />
             </div>
-            
-            {formState.currentlyInsured === 'Yes' && (
-              <div className="mt-6 animate-fade-in">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Who is your current carrier?
-                </label>
-                <Select
-                  value={formState.currentCarrier || ''}
-                  onValueChange={setCurrentCarrier}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select carrier" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {INSURANCE_CARRIERS.map((carrier) => (
-                      <SelectItem key={carrier} value={carrier}>
-                        {carrier}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-            
             <div className="mt-8 flex justify-between">
               <Button 
                 variant="outline" 
@@ -272,21 +253,49 @@ const FormPage: React.FC = () => {
               >
                 Back
               </Button>
-              <Button 
-                onClick={handleContinue}
-                disabled={
-                  !formState.currentlyInsured || 
-                  (formState.currentlyInsured === 'Yes' && !formState.currentCarrier)
-                }
-                className="bg-brand-500 hover:bg-brand-600 text-white"
-              >
-                Continue
-              </Button>
             </div>
           </div>
         );
-        
-      case 4: // Credit Score
+      
+      case 4: // Current Carrier (only if insured)
+        if (formState.currentlyInsured === 'Yes') {
+          return (
+            <div className="animate-fade-in">
+              <h2 className="text-2xl font-bold mb-8 text-center">Current Insurance Company</h2>
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                {INSURANCE_CARRIERS.map((carrier) => (
+                  <div
+                    key={carrier}
+                    className={`p-3 rounded-lg cursor-pointer text-center transition-all ${
+                      formState.currentCarrier === carrier 
+                        ? 'bg-brand-500 text-white' 
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                    }`}
+                    onClick={() => {
+                      setCurrentCarrier(carrier);
+                      nextStep();
+                    }}
+                  >
+                    <div className="font-medium">{carrier}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 flex justify-between">
+                <Button 
+                  variant="outline" 
+                  onClick={prevStep}
+                  className="border-brand-300 text-brand-500 hover:bg-brand-50"
+                >
+                  Back
+                </Button>
+              </div>
+            </div>
+          );
+        }
+        // If not insured, this step should be skipped
+        // Fall through to credit score step
+      
+      case 5: // Credit Score (case 4 if not insured)
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">What's your credit score?</h2>
@@ -295,25 +304,25 @@ const FormPage: React.FC = () => {
                 option="Excellent"
                 value="Excellent"
                 selected={formState.creditScore === 'Excellent'}
-                onClick={() => setCreditScore('Excellent')}
+                onClick={() => handleOptionSelect(setCreditScore, 'Excellent')}
               />
               <OptionCard
                 option="Good"
                 value="Good"
                 selected={formState.creditScore === 'Good'}
-                onClick={() => setCreditScore('Good')}
+                onClick={() => handleOptionSelect(setCreditScore, 'Good')}
               />
               <OptionCard
                 option="Fair"
                 value="Fair"
                 selected={formState.creditScore === 'Fair'}
-                onClick={() => setCreditScore('Fair')}
+                onClick={() => handleOptionSelect(setCreditScore, 'Fair')}
               />
               <OptionCard
                 option="Poor"
                 value="Poor"
                 selected={formState.creditScore === 'Poor'}
-                onClick={() => setCreditScore('Poor')}
+                onClick={() => handleOptionSelect(setCreditScore, 'Poor')}
               />
             </div>
             <div className="mt-8 flex justify-between">
@@ -324,18 +333,11 @@ const FormPage: React.FC = () => {
               >
                 Back
               </Button>
-              <Button 
-                onClick={handleContinue}
-                disabled={!formState.creditScore}
-                className="bg-brand-500 hover:bg-brand-600 text-white"
-              >
-                Continue
-              </Button>
             </div>
           </div>
         );
         
-      case 5: // Military Affiliation
+      case 6: // Military Affiliation (case 5 if not insured)
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">Are either you or your spouse an active member, or an honorably discharged veteran of the US military?</h2>
@@ -344,7 +346,7 @@ const FormPage: React.FC = () => {
                 option="Yes"
                 value="Yes"
                 selected={formState.militaryAffiliation === 'Yes'}
-                onClick={() => setMilitaryAffiliation('Yes')}
+                onClick={() => handleOptionSelect(setMilitaryAffiliation, 'Yes')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -355,7 +357,7 @@ const FormPage: React.FC = () => {
                 option="No"
                 value="No"
                 selected={formState.militaryAffiliation === 'No'}
-                onClick={() => setMilitaryAffiliation('No')}
+                onClick={() => handleOptionSelect(setMilitaryAffiliation, 'No')}
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -371,18 +373,11 @@ const FormPage: React.FC = () => {
               >
                 Back
               </Button>
-              <Button 
-                onClick={handleContinue}
-                disabled={!formState.militaryAffiliation}
-                className="bg-brand-500 hover:bg-brand-600 text-white"
-              >
-                Continue
-              </Button>
             </div>
           </div>
         );
         
-      case 6: // Zip Code
+      case 7: // Zip Code (case 6 if not insured)
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">What's your zip code?</h2>
@@ -423,7 +418,7 @@ const FormPage: React.FC = () => {
           </div>
         );
         
-      case 7: // Review & Submit
+      case 8: // Review & Submit (case 7 if not insured)
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-6 text-center">Review Your Information</h2>
@@ -517,7 +512,7 @@ const FormPage: React.FC = () => {
         </div>
         
         <div className="max-w-2xl mx-auto">
-          <ProgressBar currentStep={currentStep} totalSteps={7} />
+          <ProgressBar currentStep={currentStep} totalSteps={getTotalSteps()} />
           
           <FormCard>
             {renderStep()}
