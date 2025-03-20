@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -17,11 +16,9 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 animate-fade-in mb-6">
       <div className="relative">
-        {rank <= 2 && (
-          <div className="absolute top-0 left-0 bg-brand-500 text-white px-4 py-1 rounded-tr-lg rounded-bl-lg font-medium z-10">
-            {rank === 1 ? 'Our Top Choice' : `#${rank}`}
-          </div>
-        )}
+        <div className={`absolute top-0 left-0 ${rank === 1 ? 'bg-brand-500' : 'bg-gray-600'} text-white px-4 py-1 rounded-tr-lg rounded-bl-lg font-medium z-10`}>
+          {rank === 1 ? 'Our Top Choice' : `#${rank}`}
+        </div>
         
         <div className="p-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
