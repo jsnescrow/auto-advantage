@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -44,6 +43,7 @@ const FormPage: React.FC = () => {
     nextStep,
     prevStep,
     getTotalSteps,
+    isFormComplete,
   } = useFormContext();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +71,7 @@ const FormPage: React.FC = () => {
     }
     
     // Auto-advance for all other options
-    if (currentStep < (formState.currentlyInsured === 'Yes' ? 8 : 7)) {
+    if (currentStep < (formState.currentlyInsured === 'Yes' ? 7 : 6)) {
       nextStep();
     }
   };
@@ -118,11 +118,12 @@ const FormPage: React.FC = () => {
   const handleContinue = () => {
     if (currentStep === 6) { // Zip code step
       if (!validateZip()) return;
-    }
-    
-    if (currentStep === (formState.currentlyInsured === 'Yes' ? 8 : 7)) { // Final step
-      handleSubmit();
-      return;
+      
+      // Skip review screen and go straight to loading/submission
+      if (isFormComplete()) {
+        handleSubmit();
+        return;
+      }
     }
     
     nextStep();
@@ -412,7 +413,7 @@ const FormPage: React.FC = () => {
                 disabled={!formState.zipCode || formState.zipCode.length !== 5}
                 className="bg-brand-500 hover:bg-brand-600 text-white"
               >
-                Continue
+                Get My Quotes
               </Button>
             </div>
           </div>
@@ -512,7 +513,7 @@ const FormPage: React.FC = () => {
         </div>
         
         <div className="max-w-2xl mx-auto">
-          <ProgressBar currentStep={currentStep} totalSteps={getTotalSteps()} />
+          <ProgressBar currentStep={currentStep} totalSteps={getTotalSteps() - 1} />
           
           <FormCard>
             {renderStep()}
@@ -536,3 +537,4 @@ const FormPage: React.FC = () => {
 };
 
 export default FormPage;
+

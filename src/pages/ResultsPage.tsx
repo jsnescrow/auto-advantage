@@ -96,8 +96,12 @@ const ResultsPage: React.FC = () => {
           
           {providers.length > 0 ? (
             <div className="space-y-6 animate-fade-in">
-              {providers.map((provider) => (
-                <ResultCard key={provider.id} provider={provider} />
+              {providers.map((provider, index) => (
+                <ResultCard 
+                  key={provider.id} 
+                  provider={provider} 
+                  rank={index + 1}
+                />
               ))}
               
               <div className="text-center mt-12">
