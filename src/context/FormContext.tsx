@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type CreditScoreType = 'Excellent' | 'Good' | 'Fair' | 'Poor';
@@ -94,9 +95,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const getTotalSteps = () => {
-    // If user is currently insured, include the carrier selection step
-    // We removed the review step, so we subtract 1 from the total
-    return formState.currentlyInsured === 'Yes' ? 7 : 6;
+    // Total steps depends on whether user is currently insured
+    return formState.currentlyInsured === 'Yes' ? 7 : 7;
   };
 
   const isFormComplete = () => {

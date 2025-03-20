@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -64,14 +65,14 @@ const FormPage: React.FC = () => {
   const handleOptionSelect = (setter: Function, value: any) => {
     setter(value);
     
-    // For currently insured = Yes, don't auto-advance; we'll show the carrier selection step
+    // Special case for currently insured = Yes, show carrier selection
     if (currentStep === 3 && value === 'Yes') {
       nextStep();
       return;
     }
     
     // Auto-advance for all other options
-    if (currentStep < (formState.currentlyInsured === 'Yes' ? 7 : 6)) {
+    if (currentStep < getTotalSteps()) {
       nextStep();
     }
   };
@@ -116,10 +117,10 @@ const FormPage: React.FC = () => {
 
   // Handle continuing to next step
   const handleContinue = () => {
-    if (currentStep === 6) { // Zip code step
+    if (currentStep === getTotalSteps()) { // Zip code step (last step)
       if (!validateZip()) return;
       
-      // Skip review screen and go straight to loading/submission
+      // If complete, go straight to loading/submission
       if (isFormComplete()) {
         handleSubmit();
         return;
@@ -133,7 +134,6 @@ const FormPage: React.FC = () => {
   const renderStep = () => {
     // Adjust step numbers based on whether we have the carrier selection step
     const hasCarrierStep = formState.currentlyInsured === 'Yes';
-    const adjustedStep = currentStep > 3 && hasCarrierStep ? currentStep - 1 : currentStep;
     
     switch (currentStep) {
       case 1: // Vehicle Count
@@ -293,10 +293,10 @@ const FormPage: React.FC = () => {
             </div>
           );
         }
-        // If not insured, this step should be skipped
-        // Fall through to credit score step
+        // If not insured, this step should be skipped and we fall through to the next step
+        return renderStep(); // Recursively call to get the next step
       
-      case 5: // Credit Score (case 4 if not insured)
+      case 5: // Credit Score
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">What's your credit score?</h2>
@@ -338,7 +338,7 @@ const FormPage: React.FC = () => {
           </div>
         );
         
-      case 6: // Military Affiliation (case 5 if not insured)
+      case 6: // Military Affiliation
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">Are either you or your spouse an active member, or an honorably discharged veteran of the US military?</h2>
@@ -378,7 +378,7 @@ const FormPage: React.FC = () => {
           </div>
         );
         
-      case 7: // Zip Code (case 6 if not insured)
+      case 7: // Zip Code (final step)
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">What's your zip code?</h2>
@@ -409,69 +409,8 @@ const FormPage: React.FC = () => {
                 Back
               </Button>
               <Button 
-                onClick={handleContinue}
-                disabled={!formState.zipCode || formState.zipCode.length !== 5}
-                className="bg-brand-500 hover:bg-brand-600 text-white"
-              >
-                Get My Quotes
-              </Button>
-            </div>
-          </div>
-        );
-        
-      case 8: // Review & Submit (case 7 if not insured)
-        return (
-          <div className="animate-fade-in">
-            <h2 className="text-2xl font-bold mb-6 text-center">Review Your Information</h2>
-            <div className="space-y-4 mb-6">
-              <div className="border border-gray-200 rounded-lg p-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Number of Vehicles</p>
-                    <p className="font-medium">{formState.vehicleCount}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Homeowner</p>
-                    <p className="font-medium">{formState.homeowner}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Currently Insured</p>
-                    <p className="font-medium">{formState.currentlyInsured}</p>
-                  </div>
-                  {formState.currentlyInsured === 'Yes' && (
-                    <div>
-                      <p className="text-sm text-gray-500">Current Carrier</p>
-                      <p className="font-medium">{formState.currentCarrier}</p>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-sm text-gray-500">Credit Score</p>
-                    <p className="font-medium">{formState.creditScore}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Military Affiliation</p>
-                    <p className="font-medium">{formState.militaryAffiliation}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Zip Code</p>
-                    <p className="font-medium">{formState.zipCode}</p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500 text-center">
-                By continuing, you agree to our Terms of Service and Privacy Policy.
-              </p>
-            </div>
-            <div className="mt-6 flex justify-between">
-              <Button 
-                variant="outline" 
-                onClick={prevStep}
-                className="border-brand-300 text-brand-500 hover:bg-brand-50"
-              >
-                Back
-              </Button>
-              <Button 
                 onClick={handleSubmit}
+                disabled={!formState.zipCode || formState.zipCode.length !== 5}
                 className="bg-brand-500 hover:bg-brand-600 text-white"
               >
                 Get My Quotes
@@ -513,7 +452,7 @@ const FormPage: React.FC = () => {
         </div>
         
         <div className="max-w-2xl mx-auto">
-          <ProgressBar currentStep={currentStep} totalSteps={getTotalSteps() - 1} />
+          <ProgressBar currentStep={currentStep} totalSteps={getTotalSteps()} />
           
           <FormCard>
             {renderStep()}
@@ -537,4 +476,3 @@ const FormPage: React.FC = () => {
 };
 
 export default FormPage;
-

@@ -30,6 +30,7 @@ const OptionCard: React.FC<OptionCardProps> = ({
         selected ? "border-brand-500 bg-brand-50 text-brand-700" : "border-gray-200 hover:border-brand-300 hover:bg-gray-50"
       )}
       onClick={handleClick}
+      data-testid={`option-${value}`}
     >
       <div className="flex flex-col items-center justify-center text-center">
         {icon && <div className="mb-3">{icon}</div>}
