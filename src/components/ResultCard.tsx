@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -33,8 +34,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
               
               <div className="text-center md:text-left">
                 <h3 className="text-xl font-semibold mb-2">{provider.name}</h3>
-                {provider.benefits && provider.benefits.length > 0 && (
-                  <p className="text-gray-600">{provider.benefits[0]}</p>
+                {provider.rate && (
+                  <p className="text-gray-600">{provider.rate}</p>
                 )}
               </div>
             </div>
