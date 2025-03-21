@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -11,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { fetchWithRetry } from '@/utils/api';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { CarFront } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 

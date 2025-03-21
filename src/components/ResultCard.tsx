@@ -42,7 +42,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         </div>
         
         {isTopChoice && (
-          <div className="bg-emerald-500 py-1 px-3 text-white text-sm font-medium">
+          <div className="absolute top-0 left-8 bg-brand-500 py-1 px-3 text-white text-sm font-medium">
             Our Top Choice
           </div>
         )}
@@ -77,7 +77,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
           <div className="flex-shrink-0">
             {isTopChoice ? (
               <Button
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-6 animate-pulse-slow"
+                className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 animate-pulse-slow"
                 onClick={() => window.open(provider.url, '_blank')}
               >
                 VIEW RATES
@@ -98,7 +98,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         <div className="flex justify-center">
           <div className="bg-white py-2 px-4 text-center shadow-md rounded-full -mb-4 border border-gray-100 inline-block">
             <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-emerald-500">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
               </svg>
               <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
