@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -24,12 +23,7 @@ const ResultsPage: React.FC = () => {
     if (storedProviders) {
       try {
         const parsedProviders = JSON.parse(storedProviders);
-        // Ensure rank is always a string to match ResultCard's expected props
-        const updatedProviders = parsedProviders.map((provider: Provider) => ({
-          ...provider,
-          rank: provider.rank !== undefined ? String(provider.rank) : undefined
-        }));
-        setProviders(updatedProviders);
+        setProviders(parsedProviders);
       } catch (error) {
         console.error('Error parsing providers:', error);
       }
