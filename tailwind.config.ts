@@ -170,11 +170,11 @@ export default {
 					}
 				},
 				'shimmer-smooth': {
-					'0%': {
-						transform: 'translateX(0%)'
-					},
 					'100%': {
-						transform: 'translateX(300%)'
+						transform: 'translateX(100%)'
+					},
+					'0%': {
+						transform: 'translateX(-100%)'
 					}
 				}
 			},

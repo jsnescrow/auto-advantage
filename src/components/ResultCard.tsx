@@ -103,8 +103,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
                   onClick={() => window.open(provider.url, '_blank')}
                 >
                   VIEW RATES
-                  <div className="absolute inset-0 w-full">
-                    <div className="absolute -left-[100%] top-0 w-[50%] h-full transform -skew-x-12 bg-white/20 animate-shimmer-smooth"></div>
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-0 w-1/3 h-full bg-white/20 -skew-x-12 animate-shimmer-smooth"></div>
                   </div>
                 </Button>
               ) : (
