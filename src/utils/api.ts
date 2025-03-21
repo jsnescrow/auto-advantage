@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 // Define interfaces for the API request and response
@@ -118,8 +119,8 @@ export const triggerPostback = async (provider: Provider, formData: any, clickId
     
     // Add all the requested fields to the postback
     const params = new URLSearchParams({
-      // From web page
-      clickId: clickId || "",
+      // From web page - using "clickid" (lowercase) instead of "clickId"
+      clickid: clickId || "",
       
       // From API response
       provider_id: provider.id,
@@ -176,7 +177,8 @@ export const trackProviderClick = async (provider: Provider, zipCode: string): P
       const conversionUrl = `https://n8n.f4growth.co/webhook-test/quinstreet-conversion-v1`;
       
       const params = new URLSearchParams({
-        cid: clickId,
+        // Changed from "cid" to "clickid" to be consistent
+        clickid: clickId,
         event: "click",
         revenue: provider.cpc || "0", // Use the CPC value as revenue if available
         currency: "USD",
