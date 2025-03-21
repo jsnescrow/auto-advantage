@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 // Define interfaces for the API request and response
@@ -110,7 +111,7 @@ export const formatRequestData = (formState: any): ApiRequestData => {
 };
 
 // Function to trigger the postback
-export const triggerPostback = async (formState: any): Promise<boolean> => {
+export const triggerPostback = async (formState: any, providerId: string = ""): Promise<boolean> => {
   try {
     const postbackUrl = "https://n8n.f4growth.co/webhook-test/quinstreet-postback-prod-v1";
     
@@ -119,6 +120,7 @@ export const triggerPostback = async (formState: any): Promise<boolean> => {
       ni_ad_client: "701117",
       ni_zc: formState.zipCode || "",
       timestamp: new Date().toISOString(),
+      provider_id: providerId
     });
     
     const fullUrl = `${postbackUrl}?${params.toString()}`;
@@ -141,6 +143,15 @@ export const triggerPostback = async (formState: any): Promise<boolean> => {
 // Function to track conversions when a user clicks on a provider link
 export const trackProviderClick = async (provider: Provider, zipCode: string): Promise<void> => {
   try {
+    console.log("Tracking provider click:", provider.name, "with ID:", provider.id);
+    
+    // Get the form data from sessionStorage for postback
+    const formDataStr = sessionStorage.getItem('formData');
+    const formData = formDataStr ? JSON.parse(formDataStr) : { zipCode };
+    
+    // Trigger the postback when a provider is clicked (not on form submission)
+    await triggerPostback(formData, provider.id);
+    
     const clickId = localStorage.getItem("clickId");
     console.log("ClickID found for tracking:", clickId);
     
@@ -228,15 +239,7 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
       console.log("Stored clickId:", clickId);
     }
     
-    // Trigger the postback after receiving a successful response
-    triggerPostback(formData)
-      .then(success => {
-        if (success) {
-          console.log("Postback was triggered successfully");
-        } else {
-          console.warn("Postback trigger failed, but continuing with quote display");
-        }
-      });
+    // We've removed the postback trigger from here - it will now only happen on provider click
     
     // Transform the response to our expected format
     const providers = transformApiResponse(data);
