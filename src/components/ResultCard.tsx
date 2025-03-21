@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -17,34 +16,28 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   const isTopChoice = rank === 1;
   const [visitorCount, setVisitorCount] = useState<number>(0);
   
-  // Generate a random visitor count between 1000 and 3000 on component mount
   useEffect(() => {
     if (isTopChoice) {
-      // Check if we have a stored count and if it's less than 24 hours old
       const storedVisitors = localStorage.getItem('visitorCount');
       const storedTimestamp = localStorage.getItem('visitorCountTimestamp');
       
       if (storedVisitors && storedTimestamp) {
         const now = new Date().getTime();
         const storedTime = parseInt(storedTimestamp, 10);
-        // If stored count is less than 24 hours old, use it
         if (now - storedTime < 24 * 60 * 60 * 1000) {
           setVisitorCount(parseInt(storedVisitors, 10));
           return;
         }
       }
       
-      // Generate new random count
-      const randomCount = Math.floor(Math.random() * 2001) + 1000; // 1000 to 3000
+      const randomCount = Math.floor(Math.random() * 2001) + 1000;
       setVisitorCount(randomCount);
       
-      // Store in localStorage with timestamp
       localStorage.setItem('visitorCount', randomCount.toString());
       localStorage.setItem('visitorCountTimestamp', new Date().getTime().toString());
     }
   }, [isTopChoice]);
   
-  // Function to decode HTML entities
   const decodeHtml = (html: string | undefined): string => {
     if (!html) return '';
     
@@ -61,7 +54,6 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
           ? "border-gray-200" 
           : "border-gray-200"
       )}>
-        {/* Rank indicator */}
         <div className="absolute top-0 left-0 flex items-center">
           <div className={cn(
             "flex items-center justify-center w-7 h-7 text-white font-bold text-sm",
@@ -110,8 +102,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
                   onClick={() => window.open(provider.url, '_blank')}
                 >
                   VIEW RATES
-                  {/* Improved shimmer effect overlay - starting from outside the left edge */}
-                  <div className="absolute -left-[100%] top-0 w-[200%] h-full transform -skew-x-12 bg-white/20 animate-shimmer"></div>
+                  <div className="absolute -left-[50%] top-0 w-[100%] h-full transform -skew-x-12 bg-white/20 animate-shimmer"></div>
                 </Button>
               ) : (
                 <Button
@@ -126,7 +117,6 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         </div>
       </div>
       
-      {/* Visitor counter badge - positioned as an overlay on the bottom */}
       {isTopChoice && (
         <div className="absolute left-0 right-0 bottom-0 transform translate-y-1/2 flex justify-center">
           <div className="bg-white py-1.5 px-4 text-center shadow-md rounded-full border border-gray-100">
