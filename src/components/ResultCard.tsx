@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +15,34 @@ interface ResultCardProps {
 
 const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   const isTopChoice = rank === 1;
+  const [visitorCount, setVisitorCount] = useState<number>(0);
+  
+  // Generate a random visitor count between 1000 and 3000 on component mount
+  useEffect(() => {
+    if (isTopChoice) {
+      // Check if we have a stored count and if it's less than 24 hours old
+      const storedVisitors = localStorage.getItem('visitorCount');
+      const storedTimestamp = localStorage.getItem('visitorCountTimestamp');
+      
+      if (storedVisitors && storedTimestamp) {
+        const now = new Date().getTime();
+        const storedTime = parseInt(storedTimestamp, 10);
+        // If stored count is less than 24 hours old, use it
+        if (now - storedTime < 24 * 60 * 60 * 1000) {
+          setVisitorCount(parseInt(storedVisitors, 10));
+          return;
+        }
+      }
+      
+      // Generate new random count
+      const randomCount = Math.floor(Math.random() * 2001) + 1000; // 1000 to 3000
+      setVisitorCount(randomCount);
+      
+      // Store in localStorage with timestamp
+      localStorage.setItem('visitorCount', randomCount.toString());
+      localStorage.setItem('visitorCountTimestamp', new Date().getTime().toString());
+    }
+  }, [isTopChoice]);
   
   // Function to decode HTML entities
   const decodeHtml = (html: string | undefined): string => {
@@ -78,10 +106,12 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
             <div className="flex-shrink-0 mb-6">
               {isTopChoice ? (
                 <Button
-                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 animate-pulse-slow"
+                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 relative overflow-hidden group"
                   onClick={() => window.open(provider.url, '_blank')}
                 >
                   VIEW RATES
+                  {/* Shimmer effect overlay */}
+                  <div className="absolute inset-0 w-1/2 h-full transform -skew-x-12 bg-white/20 animate-shimmer"></div>
                 </Button>
               ) : (
                 <Button
@@ -104,7 +134,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
               </svg>
-              <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
+              <span><span className="font-semibold">{visitorCount.toLocaleString()}</span> drivers visited this site today</span>
             </div>
           </div>
         </div>

@@ -160,6 +160,11 @@ export default {
 					'100%': {
 						transform: 'translateX(-100%)'
 					}
+				},
+				'shimmer': {
+					'100%': {
+						transform: 'translateX(150%)'
+					}
 				}
 			},
 			animation: {
@@ -171,7 +176,8 @@ export default {
 				'button-pulse': 'button-pulse 2s ease-in-out infinite',
 				'spin-slow': 'spin-slow 2s ease-in-out infinite',
 				'slide-in': 'slide-in 0.3s ease-out forwards',
-				'slide-out': 'slide-out 0.3s ease-out forwards'
+				'slide-out': 'slide-out 0.3s ease-out forwards',
+				'shimmer': 'shimmer 2s infinite'
 			}
 		}
 	},
