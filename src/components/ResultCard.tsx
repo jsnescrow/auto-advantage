@@ -26,75 +26,77 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   };
   
   return (
-    <div className={cn(
-      "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300 mb-12 relative",
-      isTopChoice 
-        ? "border-gray-200" 
-        : "border-gray-200"
-    )}>
-      {/* Rank indicator */}
-      <div className="absolute top-0 left-0 flex items-center">
-        <div className={cn(
-          "flex items-center justify-center w-7 h-7 text-white font-bold text-sm",
-          isTopChoice ? "bg-black" : "bg-gray-600"
-        )}>
-          {rank}
-        </div>
-        
-        {isTopChoice && (
-          <div className="bg-brand-500 h-7 py-1 px-3 text-white text-xs font-medium ml-1 flex items-center">
-            Our Top Choice
-          </div>
-        )}
-      </div>
-      
-      <div className="p-4 md:p-6 mt-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-            <div className={cn(
-              "flex-shrink-0 w-20 h-20 rounded-md flex items-center justify-center p-2",
-              "bg-white border border-gray-100"
-            )}>
-              {provider.logo ? (
-                <img src={provider.logo} alt={provider.name} className="max-w-full max-h-full object-contain" />
-              ) : (
-                <div className="text-xl font-bold text-brand-500">
-                  {provider.name.substring(0, 2).toUpperCase()}
-                </div>
-              )}
-            </div>
-            
-            <div className="text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-1 text-gray-800">
-                {provider.name}
-              </h3>
-              {provider.rate && (
-                <p className="text-gray-600">{decodeHtml(provider.rate)}</p>
-              )}
-            </div>
+    <div className="relative mb-16">
+      <div className={cn(
+        "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300",
+        isTopChoice 
+          ? "border-gray-200" 
+          : "border-gray-200"
+      )}>
+        {/* Rank indicator */}
+        <div className="absolute top-0 left-0 flex items-center">
+          <div className={cn(
+            "flex items-center justify-center w-7 h-7 text-white font-bold text-sm",
+            isTopChoice ? "bg-black" : "bg-gray-600"
+          )}>
+            {rank}
           </div>
           
-          <div className="flex-shrink-0">
-            {isTopChoice ? (
-              <Button
-                className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 animate-pulse-slow"
-                onClick={() => window.open(provider.url, '_blank')}
-              >
-                VIEW RATES
-              </Button>
-            ) : (
-              <Button
-                className="bg-brand-500 hover:bg-brand-600 text-white font-medium"
-                onClick={() => window.open(provider.url, '_blank')}
-              >
-                VIEW RATES
-              </Button>
-            )}
+          {isTopChoice && (
+            <div className="bg-brand-500 h-7 py-1 px-3 text-white text-xs font-medium ml-1 flex items-center">
+              Our Top Choice
+            </div>
+          )}
+        </div>
+        
+        <div className="p-4 md:p-6 mt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+              <div className={cn(
+                "flex-shrink-0 w-20 h-20 rounded-md flex items-center justify-center p-2",
+                "bg-white border border-gray-100"
+              )}>
+                {provider.logo ? (
+                  <img src={provider.logo} alt={provider.name} className="max-w-full max-h-full object-contain" />
+                ) : (
+                  <div className="text-xl font-bold text-brand-500">
+                    {provider.name.substring(0, 2).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              
+              <div className="text-center md:text-left">
+                <h3 className="text-xl font-semibold mb-1 text-gray-800">
+                  {provider.name}
+                </h3>
+                {provider.rate && (
+                  <p className="text-gray-600">{decodeHtml(provider.rate)}</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex-shrink-0">
+              {isTopChoice ? (
+                <Button
+                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 animate-pulse-slow"
+                  onClick={() => window.open(provider.url, '_blank')}
+                >
+                  VIEW RATES
+                </Button>
+              ) : (
+                <Button
+                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium"
+                  onClick={() => window.open(provider.url, '_blank')}
+                >
+                  VIEW RATES
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
       
-      {/* Visitor counter badge - correctly positioned at the bottom */}
+      {/* Visitor counter badge - positioned as an overlay on the bottom */}
       {isTopChoice && (
         <div className="absolute left-0 right-0 bottom-0 transform translate-y-1/2 flex justify-center">
           <div className="bg-white py-1.5 px-4 text-center shadow-md rounded-full border border-gray-100">
