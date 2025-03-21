@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -171,10 +170,10 @@ export default {
 				},
 				'shimmer-smooth': {
 					'0%': {
-						transform: 'translateX(-150%)'
+						transform: 'translateX(-120%)'
 					},
 					'100%': {
-						transform: 'translateX(250%)'
+						transform: 'translateX(120%)'
 					}
 				}
 			},
@@ -189,7 +188,7 @@ export default {
 				'slide-in': 'slide-in 0.3s ease-out forwards',
 				'slide-out': 'slide-out 0.3s ease-out forwards',
 				'shimmer': 'shimmer 2.5s infinite',
-				'shimmer-smooth': 'shimmer-smooth 3s ease-in-out infinite'
+				'shimmer-smooth': 'shimmer-smooth 2.5s ease-in-out infinite'
 			}
 		}
 	},
