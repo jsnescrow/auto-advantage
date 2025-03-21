@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -24,8 +25,10 @@ const Results2Page: React.FC = () => {
     if (storedProviders) {
       try {
         const parsedProviders = JSON.parse(storedProviders);
+        console.log("Results2Page - Loaded providers from sessionStorage:", parsedProviders);
         setApiProviders(parsedProviders);
         
+        // Create the direct link providers
         const smartFinancial: Provider = {
           id: 'smart-financial',
           name: 'Smart Financial',
@@ -42,16 +45,20 @@ const Results2Page: React.FC = () => {
           rank: '2',
         };
         
+        // Get the top 3 API providers and adjust their rank
         const topApiProviders = parsedProviders.slice(0, 3).map((provider: Provider, index: number) => ({
           ...provider,
           rank: String(index + 3)
         }));
         
+        // Combine direct link providers with API providers
         const combinedProviders = [smartFinancial, coverageProfessor, ...topApiProviders];
         setProviders(combinedProviders);
       } catch (error) {
         console.error('Error parsing providers:', error);
       }
+    } else {
+      console.warn("Results2Page - No insurance providers found in sessionStorage");
     }
     
     const urlParams = new URLSearchParams(window.location.search);

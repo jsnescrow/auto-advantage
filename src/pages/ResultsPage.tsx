@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -23,10 +24,13 @@ const ResultsPage: React.FC = () => {
     if (storedProviders) {
       try {
         const parsedProviders = JSON.parse(storedProviders);
+        console.log("ResultsPage - Loaded providers from sessionStorage:", parsedProviders);
         setProviders(parsedProviders);
       } catch (error) {
         console.error('Error parsing providers:', error);
       }
+    } else {
+      console.warn("ResultsPage - No insurance providers found in sessionStorage");
     }
     
     const urlParams = new URLSearchParams(window.location.search);

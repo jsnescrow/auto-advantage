@@ -1,3 +1,4 @@
+
 import { FormState } from '@/context/FormContext';
 
 export interface Provider {
@@ -43,13 +44,11 @@ export const fetchWithRetry = async (
       if (success) {
         console.log('Data fetch successful.');
         
-        // Mock insurance providers data
+        // Mock insurance providers data - only providing 3 providers as required
         const providers: Provider[] = [
           { id: '1', name: 'Insurance Provider A', cpc: 7.50, rank: '1', url: 'https://example.com/provider-a' },
           { id: '2', name: 'Insurance Provider B', cpc: 5.25, rank: '2', url: 'https://example.com/provider-b' },
           { id: '3', name: 'Insurance Provider C', cpc: 4.75, rank: '3', url: 'https://example.com/provider-c' },
-          { id: '4', name: 'Insurance Provider D', cpc: 3.50, rank: '4', url: 'https://example.com/provider-d' },
-          { id: '5', name: 'Insurance Provider E', cpc: 2.25, rank: '5', url: 'https://example.com/provider-e' },
         ];
         
         // Check CPC value of the top provider to determine which results page to show
@@ -58,6 +57,9 @@ export const fetchWithRetry = async (
           : parseFloat(providers[0].cpc as string);
           
         const shouldUseAlternateResults = topProviderCpc < 6;
+        
+        // Store the providers in sessionStorage for use in the results pages
+        sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
         
         return { 
           success: true, 
