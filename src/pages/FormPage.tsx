@@ -53,10 +53,7 @@ const FormPage: React.FC = () => {
   const [zipError, setZipError] = useState('');
 
   useEffect(() => {
-    const testApi = async () => {
-      await testApiEndpoint();
-    };
-    testApi();
+    testApiEndpoint();
   }, []);
 
   const handleOptionSelect = (setter: Function, value: any) => {
@@ -97,17 +94,12 @@ const FormPage: React.FC = () => {
       console.log('====== FORM SUBMISSION STARTED ======');
       console.log('Current form state:', formState);
       
-      // Store form data in sessionStorage for access in the results page
       sessionStorage.setItem('formData', JSON.stringify(formState));
       console.log('Form data stored in sessionStorage');
       
-      // Test the API connection first
-      const apiTestResult = await testApiEndpoint();
-      console.log('API test result:', apiTestResult);
-      
       console.log('Fetching insurance quotes...');
       const response = await fetchWithRetry(formState);
-      console.log('API response received:', response);
+      console.log('Quote response received:', response);
       
       if (response.success && response.providers) {
         console.log('Providers received:', response.providers.length);

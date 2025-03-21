@@ -10,25 +10,28 @@ import ResultsPage from "./pages/ResultsPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import NotFound from "./pages/NotFound";
+import { toast } from "sonner";
 
 // Create a client with default options and explicit error handling
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3,
+      retry: 1,
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
       meta: {
-        onError: (error) => {
+        onError: (error: any) => {
           console.error('Query error:', error);
+          toast.error('An error occurred while fetching data');
         }
       }
     },
     mutations: {
-      retry: 3,
+      retry: 1,
       meta: {
-        onError: (error) => {
+        onError: (error: any) => {
           console.error('Mutation error:', error);
+          toast.error('An error occurred while submitting data');
         }
       }
     }
