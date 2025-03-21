@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // Define interfaces for the API request and response
@@ -165,8 +164,15 @@ export const trackProviderClick = async (provider: Provider, zipCode: string): P
     const formDataStr = sessionStorage.getItem('formData');
     const formData = formDataStr ? JSON.parse(formDataStr) : { zipCode };
     
-    // Get clickId from localStorage
-    const clickId = localStorage.getItem("clickId");
+    // Get clickId from URL parameters first, then localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    let clickId = urlParams.get('cid') || urlParams.get('clickid');
+    
+    // If not in URL, try localStorage
+    if (!clickId) {
+      clickId = localStorage.getItem("clickId");
+    }
+    
     console.log("ClickID found for tracking:", clickId);
     
     // Trigger the postback with all required data
@@ -177,7 +183,7 @@ export const trackProviderClick = async (provider: Provider, zipCode: string): P
       const conversionUrl = `https://n8n.f4growth.co/webhook-test/quinstreet-conversion-v1`;
       
       const params = new URLSearchParams({
-        // Changed from "cid" to "clickid" to be consistent
+        // Using "clickid" (lowercase) consistently
         clickid: clickId,
         event: "click",
         revenue: provider.cpc || "0", // Use the CPC value as revenue if available
@@ -253,7 +259,7 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
     
     // Store the clickId if it's in the URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const clickId = urlParams.get('cid') || urlParams.get('clickId');
+    const clickId = urlParams.get('cid') || urlParams.get('clickid');
     if (clickId) {
       localStorage.setItem("clickId", clickId);
       console.log("Stored clickId:", clickId);

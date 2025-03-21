@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -32,8 +33,9 @@ const ResultsPage: React.FC = () => {
     }
     
     // Check for click ID in URL params and store it if present
+    // Look for both 'cid' and 'clickid' parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const clickId = urlParams.get('cid') || urlParams.get('clickId');
+    const clickId = urlParams.get('cid') || urlParams.get('clickid');
     if (clickId) {
       localStorage.setItem("clickId", clickId);
       console.log("Stored clickId from URL:", clickId);
