@@ -5,9 +5,9 @@ const Logo: React.FC = () => {
   return (
     <div className="flex items-center">
       <div className="text-2xl md:text-3xl font-bold">
-        <span className="text-brand-500">TOP</span>
-        <span className="text-brand-700">5</span>
-        <span className="text-brand-500">COMPARE</span>
+        <span className="text-brand-500">AUTO</span>
+        <span className="text-brand-700">RATE</span>
+        <span className="text-brand-500">SAVER</span>
         <span className="ml-1 text-brand-500">
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
