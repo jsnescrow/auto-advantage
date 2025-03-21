@@ -171,10 +171,10 @@ export default {
 				},
 				'shimmer-smooth': {
 					'0%': {
-						left: '-100%'
+						transform: 'translateX(-150%)'
 					},
 					'100%': {
-						left: '200%'
+						transform: 'translateX(250%)'
 					}
 				}
 			},
@@ -189,7 +189,7 @@ export default {
 				'slide-in': 'slide-in 0.3s ease-out forwards',
 				'slide-out': 'slide-out 0.3s ease-out forwards',
 				'shimmer': 'shimmer 2.5s infinite',
-				'shimmer-smooth': 'shimmer-smooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+				'shimmer-smooth': 'shimmer-smooth 3s ease-in-out infinite'
 			}
 		}
 	},
