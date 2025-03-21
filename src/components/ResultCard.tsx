@@ -104,7 +104,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
                 >
                   VIEW RATES
                   <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute top-0 w-1/3 h-full bg-white/25 -skew-x-12 animate-shimmer-smooth"></div>
+                    <div className="absolute top-0 left-0 w-[30%] h-full bg-white/20 -skew-x-12 animate-shimmer-smooth"></div>
                   </div>
                 </Button>
               ) : (
