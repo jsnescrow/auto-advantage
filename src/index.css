@@ -141,9 +141,9 @@
   }
 }
 
-/* Footer styling - completely redone to fix overlap issues */
+/* Footer styling - correctly positioned at bottom */
 .fixed-footer {
-  position: static; /* Changed from fixed to static */
+  position: static; /* Keep as static */
   margin-top: auto;
   background-color: rgba(243, 244, 246, 0.95);
   border-top: 1px solid #e5e7eb;
@@ -151,19 +151,19 @@
 
 /* Add padding to the bottom of the page content to prevent footer from covering content */
 .footer-space {
-  padding-bottom: 2rem; /* Much smaller padding since footer is now static */
+  padding-bottom: 8rem; /* Increased padding to create more space */
 }
 
-/* Animation */
-@keyframes pulse-slow {
+/* Animation for pulsing button - updated for zoom effect */
+@keyframes pulse-zoom {
   0%, 100% {
-    opacity: 1;
+    transform: scale(1);
   }
   50% {
-    opacity: 0.7;
+    transform: scale(1.05);
   }
 }
 
 .animate-pulse-slow {
-  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse-zoom 2s ease-in-out infinite;
 }

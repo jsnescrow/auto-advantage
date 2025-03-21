@@ -42,13 +42,13 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         </div>
         
         {isTopChoice && (
-          <div className="bg-brand-500 py-1 px-3 text-white text-sm font-medium">
+          <div className="bg-brand-500 py-1 px-3 text-white text-sm font-medium ml-1">
             Our Top Choice
           </div>
         )}
       </div>
       
-      <div className="p-4 md:p-6 mt-2">
+      <div className="p-4 md:p-6 mt-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
             <div className={cn(
