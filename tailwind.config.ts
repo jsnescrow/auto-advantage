@@ -162,8 +162,11 @@ export default {
 					}
 				},
 				'shimmer': {
+					'0%': {
+						transform: 'translateX(-100%)'
+					},
 					'100%': {
-						transform: 'translateX(150%)'
+						transform: 'translateX(100%)'
 					}
 				}
 			},
@@ -177,7 +180,7 @@ export default {
 				'spin-slow': 'spin-slow 2s ease-in-out infinite',
 				'slide-in': 'slide-in 0.3s ease-out forwards',
 				'slide-out': 'slide-out 0.3s ease-out forwards',
-				'shimmer': 'shimmer 2s infinite'
+				'shimmer': 'shimmer 2.5s infinite'
 			}
 		}
 	},

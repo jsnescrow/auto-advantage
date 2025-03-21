@@ -110,8 +110,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
                   onClick={() => window.open(provider.url, '_blank')}
                 >
                   VIEW RATES
-                  {/* Shimmer effect overlay */}
-                  <div className="absolute inset-0 w-1/2 h-full transform -skew-x-12 bg-white/20 animate-shimmer"></div>
+                  {/* Improved shimmer effect overlay - starting from outside the left edge */}
+                  <div className="absolute -left-[100%] top-0 w-[200%] h-full transform -skew-x-12 bg-white/20 animate-shimmer"></div>
                 </Button>
               ) : (
                 <Button
