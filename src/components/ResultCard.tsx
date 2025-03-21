@@ -94,10 +94,10 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         </div>
       </div>
       
-      {/* Visitor counter badge - positioned to properly overlap the bottom border */}
+      {/* Visitor counter badge - correctly positioned to overlay the card's bottom border */}
       {isTopChoice && (
-        <div className="pb-6"> {/* Add padding at the bottom to make space for the badge */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 translate-y-1/2">
+        <div className="mb-4 relative">
+          <div className="absolute left-1/2 transform -translate-x-1/2 translate-y-1/2" style={{ bottom: "-12px" }}>
             <div className="bg-white py-2 px-4 text-center shadow-md rounded-full border border-gray-100">
               <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
