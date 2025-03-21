@@ -6,7 +6,6 @@ interface ResultCardProps {
   provider: {
     name: string;
     rate?: string;
-    benefits?: string[];
     url: string;
     logo?: string;
   };

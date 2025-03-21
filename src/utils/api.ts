@@ -37,19 +37,27 @@ interface ApiRequestData {
   individuals: IndividualData[];
 }
 
+export interface ListingItem {
+  rank: string;
+  title: string;
+  displayname: string;
+  clickurl: string;
+  logo?: string;
+}
+
 export interface Provider {
   id: string;
   name: string;
   logo?: string;
   rate?: string;
   url: string;
-  benefits?: string[];
 }
 
 interface ApiResponseData {
   success: boolean;
   providers?: Provider[];
   error?: string;
+  rawResponse?: any;
 }
 
 // Map form values to API expected values
@@ -100,6 +108,22 @@ export const formatRequestData = (formState: any): ApiRequestData => {
   };
 };
 
+// Transform API response to our Provider format
+const transformApiResponse = (apiResponse: any): Provider[] => {
+  if (!apiResponse?.response?.listingset?.listing || !Array.isArray(apiResponse.response.listingset.listing)) {
+    console.error('Invalid API response format:', apiResponse);
+    return [];
+  }
+
+  return apiResponse.response.listingset.listing.map((item: any) => ({
+    id: item.vendorKey || String(Math.random()),
+    name: item.displayname || item.title || 'Insurance Provider',
+    logo: item.logo || undefined,
+    rate: item.title || undefined,
+    url: item.clickurl || '#'
+  }));
+};
+
 // Send request to the API
 export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseData> => {
   const apiUrl = 'https://nextinsure.quinstage.com/listingdisplay/listings';
@@ -124,40 +148,43 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
     const data = await response.json();
     console.log('API response:', data);
     
-    // For development testing, if no providers are returned, create some dummy data
-    if (!data.providers || data.providers.length === 0) {
+    // Transform the response to our expected format
+    const providers = transformApiResponse(data);
+    console.log('Transformed providers:', providers);
+    
+    // If no providers were returned or transformation failed, use dummy data
+    if (providers.length === 0) {
       console.log('No providers returned, creating dummy data for testing');
       return {
         success: true,
         providers: [
           {
             id: '1',
-            name: 'Progressive',
-            rate: 'From $89/month',
-            url: 'https://www.progressive.com',
-            benefits: ['24/7 customer service', 'Bundle discounts available', 'Mobile app for claims']
+            name: 'Ultimate Insurance',
+            rate: 'Auto Insurance As Low As *$19*/Mo',
+            url: 'https://www.ultimateinsurance.com',
           },
           {
             id: '2',
-            name: 'Geico',
-            rate: 'From $76/month',
-            url: 'https://www.geico.com',
-            benefits: ['15 minutes could save you 15%', 'Multiple policy discounts', 'Award-winning mobile app']
+            name: 'Elephant',
+            rate: 'Get an Instant Quote for Elephant',
+            url: 'https://www.savvy.insure/elephant',
           },
           {
             id: '3',
-            name: 'State Farm',
-            rate: 'From $102/month',
-            url: 'https://www.statefarm.com',
-            benefits: ['Local agent support', 'Drive Safe & Save program', 'Accident forgiveness']
+            name: 'Branch',
+            rate: 'Bundle home & auto insurance with Branch',
+            url: 'https://www.savvy.insure/branch',
           }
-        ]
+        ],
+        rawResponse: data
       };
     }
     
     return {
       success: true,
-      providers: data.providers
+      providers,
+      rawResponse: data
     };
   } catch (error) {
     console.error('Error fetching insurance quotes:', error);
