@@ -94,15 +94,17 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         </div>
       </div>
       
-      {/* Visitor counter badge - positioned to appear at the bottom edge of the card */}
+      {/* Visitor counter badge - positioned to overlay the bottom of the card */}
       {isTopChoice && (
-        <div className="flex justify-center">
-          <div className="bg-white py-2 px-4 text-center shadow-md rounded-full border border-gray-100 inline-block absolute bottom-0 transform translate-y-1/2">
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-              <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
+        <div className="relative w-full">
+          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 translate-y-1/2 z-10">
+            <div className="bg-white py-2 px-4 text-center shadow-md rounded-full border border-gray-100">
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                </svg>
+                <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
+              </div>
             </div>
           </div>
         </div>
