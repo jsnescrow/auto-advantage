@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // Define interfaces for the API request and response
@@ -52,6 +51,8 @@ export interface Provider {
   logo?: string;
   rate?: string;
   url: string;
+  rank?: string;
+  cpc?: string;
 }
 
 interface ApiResponseData {
@@ -111,28 +112,42 @@ export const formatRequestData = (formState: any): ApiRequestData => {
 };
 
 // Function to trigger the postback
-export const triggerPostback = async (formState: any, providerId: string = ""): Promise<boolean> => {
+export const triggerPostback = async (provider: Provider, formData: any, clickId: string | null): Promise<boolean> => {
   try {
     const postbackUrl = "https://n8n.f4growth.co/webhook-test/quinstreet-postback-prod-v1";
     
-    // Add any query parameters you want to send with the GET request
+    // Add all the requested fields to the postback
     const params = new URLSearchParams({
+      // From web page
+      clickId: clickId || "",
+      
+      // From API response
+      provider_id: provider.id,
+      provider_name: provider.name,
+      rank: provider.rank || "",
+      cpc: provider.cpc || "",
+      
+      // From form data
+      insured_status: formData.currentlyInsured || "",
+      current_insurer: formData.currentCarrier || "",
+      homeowner_status: formData.homeowner || "",
+      zip_code: formData.zipCode || "",
+      credit_score: formData.creditScore || "",
+      
+      // Additional tracking info
       ni_ad_client: "701117",
-      ni_zc: formState.zipCode || "",
-      timestamp: new Date().toISOString(),
-      provider_id: providerId
+      timestamp: new Date().toISOString()
     });
     
     const fullUrl = `${postbackUrl}?${params.toString()}`;
-    console.log("Triggering postback:", fullUrl);
+    console.log("Triggering postback with complete data:", fullUrl);
     
     const response = await fetch(fullUrl, {
       method: "GET",
-      // Using no-cors mode as this is likely a cross-origin request
       mode: "no-cors"
     });
     
-    console.log("Postback triggered successfully");
+    console.log("Postback triggered successfully with complete data");
     return true;
   } catch (error) {
     console.error("Error triggering postback:", error);
@@ -149,11 +164,12 @@ export const trackProviderClick = async (provider: Provider, zipCode: string): P
     const formDataStr = sessionStorage.getItem('formData');
     const formData = formDataStr ? JSON.parse(formDataStr) : { zipCode };
     
-    // Trigger the postback when a provider is clicked (not on form submission)
-    await triggerPostback(formData, provider.id);
-    
+    // Get clickId from localStorage
     const clickId = localStorage.getItem("clickId");
     console.log("ClickID found for tracking:", clickId);
+    
+    // Trigger the postback with all required data
+    await triggerPostback(provider, formData, clickId);
     
     // If we have a clickId stored, we can use it for conversion tracking
     if (clickId) {
@@ -162,7 +178,7 @@ export const trackProviderClick = async (provider: Provider, zipCode: string): P
       const params = new URLSearchParams({
         cid: clickId,
         event: "click",
-        revenue: "0", // You might want to pass actual revenue values if available
+        revenue: provider.cpc || "0", // Use the CPC value as revenue if available
         currency: "USD",
         provider: provider.name,
         provider_id: provider.id,
@@ -203,7 +219,9 @@ const transformApiResponse = (apiResponse: any): Provider[] => {
     name: item.displayname || item.title || 'Insurance Provider',
     logo: item.logo || undefined,
     rate: item.title || undefined,
-    url: item.clickurl || '#'
+    url: item.clickurl || '#',
+    rank: item.rank || "",
+    cpc: item.cpc || ""
   }));
 };
 

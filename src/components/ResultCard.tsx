@@ -11,6 +11,8 @@ interface ResultCardProps {
     url: string;
     logo?: string;
     id: string;
+    rank?: string;
+    cpc?: string;
   };
   rank: number;
 }
@@ -52,13 +54,14 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   const handleProviderClick = (e: React.MouseEvent) => {
     e.preventDefault();
     console.log("VIEW RATES button clicked for provider:", provider.name, "with ID:", provider.id);
+    console.log("Provider data for tracking:", { rank: provider.rank, cpc: provider.cpc });
     
     // Get zip code from sessionStorage
     const formData = sessionStorage.getItem('formData');
     const zipCode = formData ? JSON.parse(formData).zipCode : '';
     console.log("Using zip code for tracking:", zipCode);
     
-    // Track the click and then navigate - this will now trigger the postback
+    // Track the click and then navigate - this will now trigger the postback with all data
     trackProviderClick(provider, zipCode);
   };
   
