@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -101,18 +102,18 @@ const FormPage: React.FC = () => {
       const response = await fetchWithRetry(formState);
       console.log('Quote response received:', response);
       
-      if (response.success && response.providers) {
+      if (response.success && response.providers && response.providers.length > 0) {
         console.log('Providers received:', response.providers.length);
         sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
         navigate('/results');
       } else {
-        console.error('API request failed or no providers returned:', response.error);
+        console.error('API request failed or no providers returned:', response);
         toast.error('No insurance providers found. Please try different criteria.');
         setIsLoading(false);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error('An error occurred. Please try again.');
+      toast.error('Error connecting to insurance providers. Please try again later.');
       setIsLoading(false);
     }
   };

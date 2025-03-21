@@ -234,11 +234,10 @@ const transformApiResponse = (apiResponse: any): Provider[] => {
 
 // Send request to the API
 export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseData> => {
-  // Use a CORS proxy if needed due to CORS issues
   const apiUrl = 'https://nextinsure.quinstage.com/listingdisplay/listings';
   const requestData = formatRequestData(formData);
   
-  console.log('DIRECT API REQUEST');
+  console.log('API REQUEST');
   console.log('API URL:', apiUrl);
   console.log('Request data:', JSON.stringify(requestData, null, 2));
   
@@ -247,59 +246,21 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
     sessionStorage.setItem('formData', JSON.stringify(formData));
     
     // Make the API request
-    console.log('Making API request to:', apiUrl);
-    
-    // Instead of fetching from the API directly (which is failing), use the mock data for now
-    // This is temporary until the API endpoint issues are resolved
-    console.log('Using mock data for insurance providers as a temporary solution');
-    
-    const mockProviders = [
-      {
-        id: '1',
-        name: 'Acme Insurance',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $89/month',
-        url: 'https://example.com/acme',
-        rank: '1',
-        cpc: '10.50'
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
-      {
-        id: '2',
-        name: 'Safe Drive Insurance',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $92/month',
-        url: 'https://example.com/safedrive',
-        rank: '2',
-        cpc: '9.75'
-      },
-      {
-        id: '3',
-        name: 'AutoProtect',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $97/month',
-        url: 'https://example.com/autoprotect',
-        rank: '3',
-        cpc: '8.20'
-      },
-      {
-        id: '4',
-        name: 'CoverWell Insurance',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $101/month',
-        url: 'https://example.com/coverwell',
-        rank: '4',
-        cpc: '7.50'
-      },
-      {
-        id: '5',
-        name: 'SecureDrive',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $107/month',
-        url: 'https://example.com/securedrive',
-        rank: '5',
-        cpc: '6.75'
-      }
-    ];
+      body: JSON.stringify(requestData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log('API response:', responseData);
     
     // Store the clickId if it's in the URL parameters
     const urlParams = new URLSearchParams(window.location.search);
@@ -309,104 +270,55 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
       console.log("Stored clickId:", clickId);
     }
     
-    // Return the providers
+    const providers = transformApiResponse(responseData);
+    
     return {
       success: true,
-      providers: mockProviders,
-      rawResponse: { mockData: true }
+      providers,
+      rawResponse: responseData
     };
   } catch (error) {
     console.error('Error fetching insurance quotes:', error);
-    toast.error('Error fetching quotes. Please try again.');
-    
-    // Return mock data for now to ensure the app continues to work
-    const mockProviders = [
-      {
-        id: '1',
-        name: 'Acme Insurance',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $89/month',
-        url: 'https://example.com/acme',
-        rank: '1',
-        cpc: '10.50'
-      },
-      {
-        id: '2',
-        name: 'Safe Drive Insurance',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $92/month',
-        url: 'https://example.com/safedrive',
-        rank: '2',
-        cpc: '9.75'
-      },
-      {
-        id: '3',
-        name: 'AutoProtect',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $97/month',
-        url: 'https://example.com/autoprotect',
-        rank: '3',
-        cpc: '8.20'
-      }
-    ];
-    
-    return {
-      success: true,
-      providers: mockProviders,
-      rawResponse: { mockData: true }
-    };
+    throw error;
   }
 };
 
-// Simplified fetch function without retries
+// Fetch with a single retry on failure
 export const fetchWithRetry = async (formData: any): Promise<ApiResponseData> => {
   try {
     return await fetchInsuranceQuotes(formData);
   } catch (error) {
-    console.error('Error in fetchWithRetry:', error);
-    toast.error('Error fetching quotes. Using demo data instead.');
+    console.error('First attempt failed, retrying API request:', error);
     
-    // Use mock data if the API fails
-    const mockProviders = [
-      {
-        id: '1',
-        name: 'Acme Insurance',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $89/month',
-        url: 'https://example.com/acme',
-        rank: '1',
-        cpc: '10.50'
-      },
-      {
-        id: '2',
-        name: 'Safe Drive Insurance',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $92/month',
-        url: 'https://example.com/safedrive',
-        rank: '2',
-        cpc: '9.75'
-      },
-      {
-        id: '3',
-        name: 'AutoProtect',
-        logo: 'https://via.placeholder.com/150',
-        rate: 'From $97/month',
-        url: 'https://example.com/autoprotect',
-        rank: '3',
-        cpc: '8.20'
-      }
-    ];
-    
-    return {
-      success: true,
-      providers: mockProviders
-    };
+    try {
+      return await fetchInsuranceQuotes(formData);
+    } catch (retryError) {
+      console.error('Retry also failed:', retryError);
+      throw retryError;
+    }
   }
 };
 
 // Test function to check API connection
 export const testApiEndpoint = async () => {
   console.log('Testing API connection...');
-  return true; // Skip the API testing for now
+  try {
+    const response = await fetch('https://nextinsure.quinstage.com/healthcheck', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    if (response.ok) {
+      console.log('API connection test successful');
+      return true;
+    } else {
+      console.warn('API connection test failed with status:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('API connection test failed with error:', error);
+    return false;
+  }
 };
-
