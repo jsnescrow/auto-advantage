@@ -99,7 +99,7 @@ const FormPage: React.FC = () => {
       // Force a small delay so any UI updates can happen before the network request
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Fetch providers data with more detailed logging
+      // Fetch providers data with detailed logging
       console.log('STARTING API CALL to fetch providers...');
       const response = await fetchWithRetry(formState, 3, 1000);
       console.log('API CALL COMPLETED with response:', response);

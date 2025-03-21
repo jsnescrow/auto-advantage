@@ -36,52 +36,94 @@ export const fetchWithRetry = async (
   // Remove any existing data to avoid confusion
   sessionStorage.removeItem('insuranceProviders');
   
-  // Since we're consistently getting 400 Bad Request errors from the real API,
-  // we'll use mock data that matches the expected structure
-  console.log('Using mock data since the real endpoint returns 400 Bad Request');
+  let retries = 0;
+  let success = false;
+  let responseData = null;
   
-  // Wait to simulate network delay for a better UX
-  await new Promise(resolve => setTimeout(resolve, 800));
+  const apiUrl = 'https://api.findinsuranceoffers.com/v1/insurance/auto';
   
-  // This structure matches the expected API response format
-  const mockListing = [
-    {
-      vendorKey: "33768010",
-      displayname: "Elephant - Savvy",
-      company: "Elephant Insurance",
-      cpc: 4.30,
-      rank: 1,
-      title: "Get Instant Quote for Elephant from Savvy, an Authorized Agent",
-      clickUrl: "https://www.savvy.insure/elephant",
-      img_pixel: "https://www.savvy.insure/elephant-tracking",
-      logo: "https://www.insurancespecialists.com/wp-content/uploads/2020/06/elephant-insurance.jpg"
-    },
-    {
-      vendorKey: "32925210",
-      displayname: "UltimateInsurance.com",
-      company: "Ultimate Insurance",
-      cpc: 4.30,
-      rank: 2,
-      title: "Insurance As Low As $419/Mo in Texas",
-      clickUrl: "https://ultimateinsurance.com",
-      img_pixel: "https://ultimateinsurance.com/tracking",
-      logo: "https://insurancethoughtleadership.com/wp-content/uploads/2020/02/cropped-ITL-logo-w-background-100.jpg"
-    },
-    {
-      vendorKey: "33768410",
-      displayname: "Savvy - Branch",
-      company: "Branch Insurance",
-      cpc: 3.80,
-      rank: 3,
-      title: "Bundle insurance with Branch-via an authorized Savvy agent",
-      clickUrl: "https://www.savvy.insure/branch",
-      img_pixel: "https://www.savvy.insure/branch-tracking",
-      logo: "https://hireandretire.com/wp-content/uploads/2023/08/Branch-Insurance-Company-Review-2022.jpg"
+  while (!success && retries < maxRetries) {
+    try {
+      console.log(`API attempt ${retries + 1}/${maxRetries}`);
+      
+      // Format the request body according to what the API expects
+      const requestBody = {
+        zipCode: formData.zipCode,
+        vehicleCount: formData.vehicleCount,
+        homeowner: formData.homeowner === 'Yes',
+        currentlyInsured: formData.currentlyInsured === 'Yes',
+        currentCarrier: formData.currentCarrier || null,
+        creditScore: formData.creditScore?.toLowerCase() || 'good',
+        militaryAffiliation: formData.militaryAffiliation === 'Yes'
+      };
+      
+      console.log('Sending API request with body:', JSON.stringify(requestBody));
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-API-Key': 'TQecSzP3TZm3uzvU7SqP9u4aH9vVu7T8',
+          'Origin': window.location.origin
+        },
+        body: JSON.stringify(requestBody),
+        credentials: 'omit',
+        mode: 'cors',
+        cache: 'no-cache'
+      });
+      
+      console.log('API response status:', response.status);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('API response data:', data);
+        responseData = data;
+        success = true;
+      } else {
+        const errorText = await response.text();
+        console.error(`API Error (${response.status}): ${errorText}`);
+        
+        if (response.status === 400) {
+          console.log('Received 400 error, checking response body for details');
+          try {
+            const errorJson = JSON.parse(errorText);
+            console.log('Parsed error response:', errorJson);
+          } catch (e) {
+            console.log('Could not parse error response as JSON:', errorText);
+          }
+        }
+        
+        retries++;
+        if (retries < maxRetries) {
+          console.log(`Retrying in ${retryDelay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
+      }
+    } catch (error) {
+      console.error('API request failed with error:', error);
+      retries++;
+      if (retries < maxRetries) {
+        console.log(`Retrying in ${retryDelay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+      }
     }
-  ];
+  }
   
-  // Transform the mock response into our Provider format
-  const providers: Provider[] = mockListing.map((item: any, index: number) => ({
+  if (!success) {
+    console.error('All API attempts failed');
+    return { 
+      success: false, 
+      providers: [], 
+      useAlternateResults: false 
+    };
+  }
+  
+  // Process the API response
+  const listings = responseData?.listing || [];
+  console.log(`Processing ${listings.length} providers from API response`);
+  
+  const providers: Provider[] = listings.map((item: any, index: number) => ({
     id: item.vendorKey || String(index + 1),
     name: item.displayname || item.company || 'Insurance Provider',
     cpc: item.cpc || '0.00',
@@ -91,7 +133,53 @@ export const fetchWithRetry = async (
     logo: item.logo || ''
   }));
   
-  console.log('Transformed providers from mock data:', providers);
+  console.log('Transformed providers from API data:', providers);
+  
+  // Fall back to some testing data only if API returned no providers
+  if (providers.length === 0) {
+    console.warn('API returned no providers, falling back to testing data');
+    
+    // Sample testing data to ensure the app still works
+    const testProviders: Provider[] = [
+      {
+        id: '1',
+        name: 'Elephant Insurance',
+        cpc: 4.30,
+        rank: 1,
+        rate: 'Get Instant Quote for Elephant',
+        url: 'https://www.elephant.com',
+        logo: 'https://www.insurancespecialists.com/wp-content/uploads/2020/06/elephant-insurance.jpg'
+      },
+      {
+        id: '2',
+        name: 'Ultimate Insurance',
+        cpc: 4.00,
+        rank: 2,
+        rate: 'Insurance As Low As $419/Mo',
+        url: 'https://ultimateinsurance.com',
+        logo: 'https://insurancethoughtleadership.com/wp-content/uploads/2020/02/cropped-ITL-logo-w-background-100.jpg'
+      },
+      {
+        id: '3',
+        name: 'Branch Insurance',
+        cpc: 3.80,
+        rank: 3,
+        rate: 'Bundle insurance with Branch',
+        url: 'https://branch.com',
+        logo: 'https://hireandretire.com/wp-content/uploads/2023/08/Branch-Insurance-Company-Review-2022.jpg'
+      }
+    ];
+    
+    sessionStorage.setItem('insuranceProviders', JSON.stringify(testProviders));
+    console.log('Stored fallback providers in sessionStorage:', testProviders);
+    
+    // Use alternate results for fallback data
+    return { 
+      success: true, 
+      providers: testProviders, 
+      useAlternateResults: true 
+    };
+  }
   
   // Store the providers in sessionStorage for use in the results pages
   sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
