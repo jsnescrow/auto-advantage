@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -11,6 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { fetchWithRetry } from '@/utils/api';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { CarFront } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // Insurance carriers
 const INSURANCE_CARRIERS = [
@@ -30,6 +32,7 @@ const INSURANCE_CARRIERS = [
 
 const FormPage: React.FC = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const {
     formState,
     setVehicleCount,
@@ -50,7 +53,6 @@ const FormPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [zipError, setZipError] = useState('');
 
-  // Fill form with test data for development
   const fillTestData = () => {
     setVehicleCount('2');
     setHomeowner('Yes');
@@ -61,37 +63,30 @@ const FormPage: React.FC = () => {
     setZipCode('15014');
   };
 
-  // Auto-advance handler for options
   const handleOptionSelect = (setter: Function, value: any) => {
     setter(value);
     
-    // Special case for currently insured = Yes, show carrier selection
     if (currentStep === 3 && value === 'Yes') {
       nextStep();
       return;
     }
     
-    // Special case for currently insured = No, skip carrier and go to credit score
     if (currentStep === 3 && value === 'No') {
-      // Skip the carrier step (4) and go directly to credit score (5)
       setCurrentStep(4);
       return;
     }
     
-    // Auto-advance for all other options
     if (currentStep < getTotalSteps()) {
       nextStep();
     }
   };
 
-  // Handle zip code validation
   const handleZipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 5);
     setZipCode(value);
     setZipError('');
   };
 
-  // Validate zip code
   const validateZip = () => {
     if (!formState.zipCode || formState.zipCode.length !== 5) {
       setZipError('Please enter a valid 5-digit zip code');
@@ -100,7 +95,6 @@ const FormPage: React.FC = () => {
     return true;
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
@@ -108,7 +102,6 @@ const FormPage: React.FC = () => {
       const response = await fetchWithRetry(formState);
       
       if (response.success && response.providers) {
-        // Store providers in sessionStorage to pass to results page
         sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
         navigate('/results');
       } else {
@@ -122,12 +115,10 @@ const FormPage: React.FC = () => {
     }
   };
 
-  // Handle continuing to next step
   const handleContinue = () => {
-    if (currentStep === getTotalSteps()) { // Zip code step (last step)
+    if (currentStep === getTotalSteps()) {
       if (!validateZip()) return;
       
-      // If complete, go straight to loading/submission
       if (isFormComplete()) {
         handleSubmit();
         return;
@@ -137,16 +128,14 @@ const FormPage: React.FC = () => {
     nextStep();
   };
 
-  // Render current form step
   const renderStep = () => {
-    // Get adjusted step based on the currentlyInsured value
     const effectiveStep = formState.currentlyInsured === 'No' && currentStep > 3 ? currentStep + 1 : currentStep;
     
     switch (effectiveStep) {
-      case 1: // Vehicle Count
+      case 1:
         return (
           <div className="animate-fade-in">
-            <h2 className="text-2xl font-bold mb-8 text-center">How many vehicles are you insuring today?</h2>
+            <h2 className={cn("font-bold text-center", isMobile ? "text-xl mb-4" : "text-2xl mb-8")}>How many vehicles are you insuring today?</h2>
             <div className="space-y-4">
               <OptionCard
                 option="One"
@@ -154,9 +143,7 @@ const FormPage: React.FC = () => {
                 selected={formState.vehicleCount === '1'}
                 onClick={() => handleOptionSelect(setVehicleCount, '1')}
                 icon={
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                  </svg>
+                  <CarFront className="w-10 h-10 text-brand-500" />
                 }
               />
               <OptionCard
@@ -165,9 +152,7 @@ const FormPage: React.FC = () => {
                 selected={formState.vehicleCount === '2'}
                 onClick={() => handleOptionSelect(setVehicleCount, '2')}
                 icon={
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                  </svg>
+                  <CarFront className="w-10 h-10 text-brand-500" />
                 }
               />
               <OptionCard
@@ -176,16 +161,14 @@ const FormPage: React.FC = () => {
                 selected={formState.vehicleCount === '3+'}
                 onClick={() => handleOptionSelect(setVehicleCount, '3+')}
                 icon={
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-brand-500">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-                  </svg>
+                  <CarFront className="w-10 h-10 text-brand-500" />
                 }
               />
             </div>
           </div>
         );
       
-      case 2: // Homeowner Status
+      case 2:
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">Are you a homeowner?</h2>
@@ -225,7 +208,7 @@ const FormPage: React.FC = () => {
           </div>
         );
       
-      case 3: // Current Insurance
+      case 3:
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">Are you currently insured?</h2>
@@ -265,7 +248,7 @@ const FormPage: React.FC = () => {
           </div>
         );
       
-      case 4: // Current Carrier (only if insured)
+      case 4:
         if (formState.currentlyInsured === 'Yes') {
           return (
             <div className="animate-fade-in">
@@ -300,7 +283,6 @@ const FormPage: React.FC = () => {
             </div>
           );
         }
-        // If we reach this step and the user is not insured, render the credit score step instead
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">What's your credit score?</h2>
@@ -342,7 +324,7 @@ const FormPage: React.FC = () => {
           </div>
         );
         
-      case 5: // Credit Score
+      case 5:
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">What's your credit score?</h2>
@@ -384,7 +366,7 @@ const FormPage: React.FC = () => {
           </div>
         );
         
-      case 6: // Military Affiliation
+      case 6:
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">Are either you or your spouse an active member, or an honorably discharged veteran of the US military?</h2>
@@ -424,7 +406,7 @@ const FormPage: React.FC = () => {
           </div>
         );
         
-      case 7: // Zip Code (final step)
+      case 7:
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-8 text-center">What's your zip code?</h2>
@@ -473,7 +455,7 @@ const FormPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-brand-800 to-brand-900">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <div className="flex justify-center mb-8">
             <Logo />
           </div>
@@ -489,18 +471,21 @@ const FormPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-brand-800 to-brand-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col items-center mb-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
+        <div className="flex flex-col items-center mb-4 md:mb-8">
           <Logo />
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mt-6 text-center mb-2">
-            Find car insurance for you
+          <h1 className={cn(
+            "font-bold text-white text-center",
+            isMobile ? "text-2xl mt-2 mb-1" : "text-3xl sm:text-4xl mt-6 mb-2"
+          )}>
+            Let's drop your auto rate today!
           </h1>
         </div>
         
         <div className="max-w-2xl mx-auto">
           <ProgressBar currentStep={currentStep} totalSteps={getTotalSteps()} />
           
-          <FormCard>
+          <FormCard className={isMobile ? "p-4" : ""}>
             {renderStep()}
           </FormCard>
           
