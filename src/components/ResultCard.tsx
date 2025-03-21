@@ -68,11 +68,14 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
                 className={cn(
                   "text-white font-medium",
                   isTopChoice 
-                    ? "bg-brand-500 hover:bg-brand-600 animate-pulse-slow" 
+                    ? "bg-brand-500 hover:bg-brand-600 relative" 
                     : "bg-gray-600 hover:bg-gray-700"
                 )}
                 onClick={() => window.open(provider.url, '_blank')}
               >
+                {isTopChoice && (
+                  <span className="absolute inset-0 rounded-md animate-pulse bg-white/20"></span>
+                )}
                 VIEW RATES
               </Button>
             </div>
