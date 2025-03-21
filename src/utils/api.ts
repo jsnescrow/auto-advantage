@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // Define interfaces for the API request and response
@@ -11,6 +10,7 @@ interface TrackingData {
   ni_ref: string;
   ni_lp_url: string;
   inventory_type: string;
+  ni_publisher_postback: string;
 }
 
 interface ContactData {
@@ -87,7 +87,8 @@ export const formatRequestData = (formState: any): ApiRequestData => {
       ua: "[AUTO_DETECT]", // This will be auto-detected by the API
       ni_ref: currentUrl,
       ni_lp_url: currentUrl,
-      inventory_type: "thankyoupage"
+      inventory_type: "thankyoupage",
+      ni_publisher_postback: "server-to-server postback url"
     },
     contact: {
       zip: formState.zipCode,
