@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -140,23 +141,25 @@
   }
 }
 
-/* Fix footer to bottom */
+/* Fix footer to bottom - modified to not cover content */
 .fixed-footer {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 10;
+  background-color: rgba(243, 244, 246, 0.95);
+  border-top: 1px solid #e5e7eb;
 }
 
 /* Add space before footer */
 .footer-space {
-  margin-bottom: 350px; /* Adjust this value based on footer height */
+  padding-bottom: 200px; /* Reduced space to avoid too much empty space */
 }
 
 @media (max-width: 768px) {
   .footer-space {
-    margin-bottom: 450px; /* Increase on mobile to ensure enough space */
+    padding-bottom: 280px; /* Space on mobile */
   }
 }
 
