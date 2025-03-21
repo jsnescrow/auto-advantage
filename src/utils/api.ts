@@ -142,6 +142,7 @@ export const triggerPostback = async (formState: any): Promise<boolean> => {
 export const trackProviderClick = async (provider: Provider, zipCode: string): Promise<void> => {
   try {
     const clickId = localStorage.getItem("clickId");
+    console.log("ClickID found for tracking:", clickId);
     
     // If we have a clickId stored, we can use it for conversion tracking
     if (clickId) {
