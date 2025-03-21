@@ -34,7 +34,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         : "border-gray-200"
     )}>
       {isTopChoice && (
-        <div className="bg-teal-500 py-1 px-3 text-white text-sm font-medium">
+        <div className="bg-brand-500 py-1 px-3 text-white text-sm font-medium">
           Our Top Choice
         </div>
       )}
@@ -62,30 +62,13 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
               {provider.rate && (
                 <p className="text-gray-600">{decodeHtml(provider.rate)}</p>
               )}
-              
-              {isTopChoice && (
-                <div className="mt-2 space-y-1">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Check className="w-4 h-4 text-teal-500 mr-2" />
-                    <span>Get a customized quote today and see what you could save</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Check className="w-4 h-4 text-teal-500 mr-2" />
-                    <span>Fast, easy and reliable claims service available 24 hours a day</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Check className="w-4 h-4 text-teal-500 mr-2" />
-                    <span>Trusted by millions of drivers to insure what's important</span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
           
           <div className="flex-shrink-0">
             {isTopChoice ? (
               <Button
-                className="bg-teal-500 hover:bg-teal-600 text-white font-medium px-6"
+                className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 animate-pulse-slow"
                 onClick={() => window.open(provider.url, '_blank')}
               >
                 VIEW RATES
@@ -105,7 +88,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
       {isTopChoice && (
         <div className="bg-gray-50 py-2 px-4 text-center border-t border-gray-100">
           <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-teal-500">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
             </svg>
             <span><span className="font-semibold">1,906</span> drivers visited this site today</span>

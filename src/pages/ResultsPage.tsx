@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -82,13 +83,10 @@ const ResultsPage: React.FC = () => {
           <div className="text-center mb-10 animate-fade-in">
             <div className="text-sm text-gray-500 mb-1">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              Compare Multiple Quotes To Find Your Best Rate
+              Your Top Car Insurance Matches
             </h1>
             <p className="text-xl text-gray-700 font-medium mb-1">
-              Drive easy knowing you're covered
-            </p>
-            <p className="text-gray-600 max-w-lg mx-auto">
-              It's time to upgrade your auto insurance! Compare discounted plans from these trusted providers, and hit the road with peace of mind.
+              Based on your information, we found these options for you.
             </p>
           </div>
           
@@ -126,9 +124,9 @@ const ResultsPage: React.FC = () => {
           <div className="bg-gray-50 rounded-lg p-6 mb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Understanding Car Insurance: Your Complete Guide</h2>
             
-            <div className="space-y-6 text-white/80 mb-10">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-3">Understanding Your Car Insurance Requirements</h3>
+            <div className="space-y-6 text-gray-700 mb-10">
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">Understanding Your Car Insurance Requirements</h3>
                 <p className="mb-4">
                   Most states require drivers to carry auto insurance, with only New Hampshire and Virginia offering alternatives. For states where it's required, you'll need to maintain minimum coverage levels to legally operate your vehicle.
                 </p>
@@ -137,8 +135,8 @@ const ResultsPage: React.FC = () => {
                 </p>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-3">Main Types of Auto Insurance Coverage</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">Main Types of Auto Insurance Coverage</h3>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold">Liability Protection</h4>
@@ -172,8 +170,8 @@ const ResultsPage: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-3">Additional Coverage Options</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">Additional Coverage Options</h3>
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold">24/7 Roadside Support</h4>
@@ -207,8 +205,8 @@ const ResultsPage: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-white mb-3">Factors Affecting Your Insurance Rates</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">Factors Affecting Your Insurance Rates</h3>
                 <p className="mb-4">Understanding what influences your premium can help you find better rates. Modern comparison tools make it easy to evaluate multiple providers and find competitive quotes that match your needs.</p>
                 <p className="italic mb-4">Remember: The lowest price isn't always the best value. While cost matters, each insurer evaluates risk factors differently, resulting in varying premiums for similar coverage.</p>
                 <p className="mb-3">Here are the primary factors insurers consider when calculating your rates:</p>
@@ -255,4 +253,3 @@ const ResultsPage: React.FC = () => {
 };
 
 export default ResultsPage;
-

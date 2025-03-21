@@ -67,8 +67,8 @@ const OptionCard: React.FC<OptionCardProps> = ({
   return (
     <div
       className={cn(
-        "option-card border rounded-md transition-all cursor-pointer",
-        isMobile ? "p-3" : "p-4",
+        "option-card border rounded-md text-center transition-all cursor-pointer flex flex-col justify-center items-center p-5",
+        isMobile ? "p-4" : "p-5",
         selected ? 
           "border-brand-500 bg-blue-50 text-brand-700" : 
           "border-gray-200 hover:border-brand-300 hover:bg-gray-50"
@@ -76,16 +76,14 @@ const OptionCard: React.FC<OptionCardProps> = ({
       onClick={handleClick}
       data-testid={`option-${value}`}
     >
-      <div className="flex flex-row items-center">
-        {iconCount ? (
-          <div className="mr-3">
-            <VehicleIcons count={iconCount} />
-          </div>
-        ) : icon ? (
-          <div className="mr-3">{icon}</div>
-        ) : null}
-        <div className="font-medium text-gray-800">{option}</div>
-      </div>
+      {iconCount ? (
+        <div className="mb-3">
+          <VehicleIcons count={iconCount} />
+        </div>
+      ) : icon ? (
+        <div className="mb-3">{icon}</div>
+      ) : null}
+      <div className="font-medium text-gray-800">{option}</div>
     </div>
   );
 };

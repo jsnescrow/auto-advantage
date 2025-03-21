@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -13,6 +14,7 @@ import { fetchWithRetry } from '@/utils/api';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { CarFront } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 const INSURANCE_CARRIERS = [
   'AAA INSURANCE CO',
@@ -464,11 +466,8 @@ const FormPage: React.FC = () => {
             "font-semibold text-gray-700 text-center",
             isMobile ? "text-2xl mt-4 mb-2" : "text-3xl mt-6 mb-2"
           )}>
-            Compare Auto Insurance Quotes
+            Let's drop your auto rate today!
           </h1>
-          <p className="text-blue-500 text-center mb-4">
-            Just answer a few simple questions, and we'll do the rest.
-          </p>
         </div>
         
         <div className="max-w-xl mx-auto">
@@ -479,6 +478,28 @@ const FormPage: React.FC = () => {
           </FormCard>
         </div>
       </div>
+      
+      <footer className="bg-gray-100 text-gray-600 py-8 border-t border-gray-200 mt-auto">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-sm mb-6">
+              <p className="mb-4">
+                The products on the websites (and any subdomains of those websites) listed above are from companies from which we may receive compensation. Compensation may impact where products appear on these websites (including the order in which they appear). These websites do not include all insurance companies or all types of products available in the marketplace. We encourage you to research all available insurance options for your situation.
+              </p>
+              <p>
+                Disclaimer: The operator of this website is not an insurance broker or an insurance company, is not a representative or an agent to any broker or insurance company, does not endorse any particular broker or insurance provider, and does not make any insurance decisions. We will submit the information you provide to a broker and/or an insurance company. This website does not constitute an offer or solicitation for automobile or other insurance. Providing your information on this site does not guarantee that you will be approved for automobile or other insurance. Not all insurance providers can or will insure your vehicle. The quotes, rates, or savings advertised on this website are not necessarily available from all providers or advertisers. Your actual quotes, rates, or savings will vary based on many different factors like: Coverage Limits, Deductibles, Driving History, Education, Occupation Type, Vehicle Location, and more. For questions regarding your insurance policy, please contact your broker or insurance company directly. Residents of some states may not be eligible for insurance or may be subject to large premiums. You are under no obligation to use our website or service to initiate contact nor apply for insurance or any product with any broker or insurance company. We receive compensation in the form of referral fees from the insurance carriers, aggregators, or other offers that we direct you to. Therefore, the amount of compensation provided, along with other factors, may impact which policy or offer you are presented. The offer you receive may be coming from the company that bid the most for your information. This website does not always provide you with an offer with the best rates or terms. Our website does not include all companies or all available offers. We encourage you to research all available insurance policy options relative to your situation. All trademarks and copyrights are the property of their respective owners.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-brand-600">
+              <Link to="/terms" className="hover:text-brand-800 transition-colors">Terms & Conditions</Link>
+              <Link to="/privacy" className="hover:text-brand-800 transition-colors">Privacy Policy</Link>
+            </div>
+            <div className="text-center mt-6 text-sm">
+              &copy; {new Date().getFullYear()} AutoRateSaver. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
