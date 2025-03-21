@@ -33,7 +33,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         : "border-gray-200"
     )}>
       {/* Rank indicator */}
-      <div className="absolute top-0 left-0">
+      <div className="absolute top-0 left-0 flex items-center">
         <div className={cn(
           "flex items-center justify-center w-8 h-8 text-white font-bold",
           isTopChoice ? "bg-black" : "bg-gray-600"
@@ -42,7 +42,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         </div>
         
         {isTopChoice && (
-          <div className="absolute top-0 left-8 bg-brand-500 py-1 px-3 text-white text-sm font-medium">
+          <div className="bg-brand-500 py-1 px-3 text-white text-sm font-medium">
             Our Top Choice
           </div>
         )}

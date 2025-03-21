@@ -141,26 +141,17 @@
   }
 }
 
-/* Fix footer to bottom - modified to not cover content */
+/* Footer styling - completely redone to fix overlap issues */
 .fixed-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
+  position: static; /* Changed from fixed to static */
+  margin-top: auto;
   background-color: rgba(243, 244, 246, 0.95);
   border-top: 1px solid #e5e7eb;
 }
 
-/* Add space before footer */
+/* Add padding to the bottom of the page content to prevent footer from covering content */
 .footer-space {
-  padding-bottom: 200px; /* Reduced space to avoid too much empty space */
-}
-
-@media (max-width: 768px) {
-  .footer-space {
-    padding-bottom: 280px; /* Space on mobile */
-  }
+  padding-bottom: 2rem; /* Much smaller padding since footer is now static */
 }
 
 /* Animation */
