@@ -238,9 +238,14 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
   const apiUrl = 'https://nextinsure.quinstage.com/listingdisplay/listings';
   const requestData = formatRequestData(formData);
   
-  console.log('Sending API request:', requestData);
+  console.log('Sending API request to:', apiUrl);
+  console.log('Request data:', JSON.stringify(requestData, null, 2));
   
   try {
+    // Store form data in session storage for later use
+    sessionStorage.setItem('formData', JSON.stringify(formData));
+    
+    // Make a real request to the API with proper headers
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -249,13 +254,15 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
       body: JSON.stringify(requestData),
     });
 
+    console.log('API response status:', response.status);
+    
     if (!response.ok) {
       console.error('API error:', response.status, response.statusText);
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('API response:', data);
+    console.log('API response data:', data);
     
     // Store the clickId if it's in the URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
@@ -265,37 +272,16 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
       console.log("Stored clickId:", clickId);
     }
     
-    // We've removed the postback trigger from here - it will now only happen on provider click
-    
     // Transform the response to our expected format
     const providers = transformApiResponse(data);
     console.log('Transformed providers:', providers);
     
-    // If no providers were returned or transformation failed, use dummy data
+    // If no providers were returned, return an empty array
     if (providers.length === 0) {
-      console.log('No providers returned, creating dummy data for testing');
+      console.log('No providers returned from API');
       return {
         success: true,
-        providers: [
-          {
-            id: '1',
-            name: 'Ultimate Insurance',
-            rate: 'Auto Insurance As Low As *$19*/Mo',
-            url: 'https://www.ultimateinsurance.com',
-          },
-          {
-            id: '2',
-            name: 'Elephant',
-            rate: 'Get an Instant Quote for Elephant',
-            url: 'https://www.savvy.insure/elephant',
-          },
-          {
-            id: '3',
-            name: 'Branch',
-            rate: 'Bundle home & auto insurance with Branch',
-            url: 'https://www.savvy.insure/branch',
-          }
-        ],
+        providers: [],
         rawResponse: data
       };
     }
