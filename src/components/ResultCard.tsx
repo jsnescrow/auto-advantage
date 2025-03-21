@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -102,7 +103,9 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
                   onClick={() => window.open(provider.url, '_blank')}
                 >
                   VIEW RATES
-                  <div className="absolute -left-[50%] top-0 w-[100%] h-full transform -skew-x-12 bg-white/20 animate-shimmer"></div>
+                  <div className="absolute inset-0 w-full">
+                    <div className="absolute -left-[100%] top-0 w-[50%] h-full transform -skew-x-12 bg-white/20 animate-shimmer-smooth"></div>
+                  </div>
                 </Button>
               ) : (
                 <Button

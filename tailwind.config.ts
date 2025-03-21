@@ -168,6 +168,14 @@ export default {
 					'100%': {
 						transform: 'translateX(100%)'
 					}
+				},
+				'shimmer-smooth': {
+					'0%': {
+						transform: 'translateX(0%)'
+					},
+					'100%': {
+						transform: 'translateX(300%)'
+					}
 				}
 			},
 			animation: {
@@ -180,7 +188,8 @@ export default {
 				'spin-slow': 'spin-slow 2s ease-in-out infinite',
 				'slide-in': 'slide-in 0.3s ease-out forwards',
 				'slide-out': 'slide-out 0.3s ease-out forwards',
-				'shimmer': 'shimmer 2.5s infinite'
+				'shimmer': 'shimmer 2.5s infinite',
+				'shimmer-smooth': 'shimmer-smooth 2s ease-in-out infinite'
 			}
 		}
 	},
