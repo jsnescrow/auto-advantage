@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -15,25 +14,25 @@ const ResultsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Store formState in sessionStorage for access by the ResultCard component
     if (formState) {
       sessionStorage.setItem('formData', JSON.stringify(formState));
     }
     
-    // Retrieve providers from sessionStorage
     const storedProviders = sessionStorage.getItem('insuranceProviders');
     
     if (storedProviders) {
       try {
         const parsedProviders = JSON.parse(storedProviders);
-        setProviders(parsedProviders);
+        const updatedProviders = parsedProviders.map((provider: Provider) => ({
+          ...provider,
+          rank: provider.rank ? String(provider.rank) : undefined
+        }));
+        setProviders(updatedProviders);
       } catch (error) {
         console.error('Error parsing providers:', error);
       }
     }
     
-    // Check for click ID in URL params and store it if present
-    // Look for both 'cid' and 'clickid' parameters
     const urlParams = new URLSearchParams(window.location.search);
     const clickId = urlParams.get('cid') || urlParams.get('clickid');
     if (clickId) {
@@ -41,7 +40,6 @@ const ResultsPage: React.FC = () => {
       console.log("Stored clickId from URL:", clickId);
     }
     
-    // Simulate loading time for a smoother transition
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);

@@ -3,8 +3,8 @@ import { FormState } from '@/context/FormContext';
 export interface Provider {
   id: string;
   name: string;
-  cpc?: number | string;
-  rank?: number | string;
+  cpc?: string | number;
+  rank?: string | number;
   rate?: string;
   url: string;
   logo?: string;
@@ -45,11 +45,11 @@ export const fetchWithRetry = async (
         
         // Mock insurance providers data
         const providers: Provider[] = [
-          { id: '1', name: 'Insurance Provider A', cpc: 7.50, rank: 1, url: 'https://example.com/provider-a' },
-          { id: '2', name: 'Insurance Provider B', cpc: 5.25, rank: 2, url: 'https://example.com/provider-b' },
-          { id: '3', name: 'Insurance Provider C', cpc: 4.75, rank: 3, url: 'https://example.com/provider-c' },
-          { id: '4', name: 'Insurance Provider D', cpc: 3.50, rank: 4, url: 'https://example.com/provider-d' },
-          { id: '5', name: 'Insurance Provider E', cpc: 2.25, rank: 5, url: 'https://example.com/provider-e' },
+          { id: '1', name: 'Insurance Provider A', cpc: 7.50, rank: '1', url: 'https://example.com/provider-a' },
+          { id: '2', name: 'Insurance Provider B', cpc: 5.25, rank: '2', url: 'https://example.com/provider-b' },
+          { id: '3', name: 'Insurance Provider C', cpc: 4.75, rank: '3', url: 'https://example.com/provider-c' },
+          { id: '4', name: 'Insurance Provider D', cpc: 3.50, rank: '4', url: 'https://example.com/provider-d' },
+          { id: '5', name: 'Insurance Provider E', cpc: 2.25, rank: '5', url: 'https://example.com/provider-e' },
         ];
         
         // Check CPC value of the top provider to determine which results page to show

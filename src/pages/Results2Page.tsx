@@ -15,12 +15,10 @@ const Results2Page: React.FC = () => {
   const [apiProviders, setApiProviders] = useState<Provider[]>([]);
 
   useEffect(() => {
-    // Store formState in sessionStorage for access by the ResultCard component
     if (formState) {
       sessionStorage.setItem('formData', JSON.stringify(formState));
     }
     
-    // Retrieve providers from sessionStorage
     const storedProviders = sessionStorage.getItem('insuranceProviders');
     
     if (storedProviders) {
@@ -28,7 +26,6 @@ const Results2Page: React.FC = () => {
         const parsedProviders = JSON.parse(storedProviders);
         setApiProviders(parsedProviders);
         
-        // Create our custom provider list with SmartFinancial and Coverage Professor at the top
         const smartFinancial: Provider = {
           id: 'smart-financial',
           name: 'Smart Financial',
@@ -45,13 +42,11 @@ const Results2Page: React.FC = () => {
           rank: '2',
         };
         
-        // Take the top 3 from API providers
         const topApiProviders = parsedProviders.slice(0, 3).map((provider: Provider, index: number) => ({
           ...provider,
-          rank: String(index + 3) // Ranks will be 3, 4, 5
+          rank: String(index + 3)
         }));
         
-        // Combine our custom providers with the top API providers
         const combinedProviders = [smartFinancial, coverageProfessor, ...topApiProviders];
         setProviders(combinedProviders);
       } catch (error) {
@@ -59,8 +54,6 @@ const Results2Page: React.FC = () => {
       }
     }
     
-    // Check for click ID in URL params and store it if present
-    // Look for both 'cid' and 'clickid' parameters
     const urlParams = new URLSearchParams(window.location.search);
     const clickId = urlParams.get('cid') || urlParams.get('clickid');
     if (clickId) {
@@ -68,7 +61,6 @@ const Results2Page: React.FC = () => {
       console.log("Stored clickId from URL:", clickId);
     }
     
-    // Simulate loading time for a smoother transition
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -134,7 +126,7 @@ const Results2Page: React.FC = () => {
                   key={provider.id} 
                   provider={provider} 
                   rank={index + 1}
-                  useDirectLink={index < 2} // Use direct links for SmartFinancial and Coverage Professor
+                  useDirectLink={index < 2}
                 />
               ))}
             </div>
@@ -291,3 +283,4 @@ const Results2Page: React.FC = () => {
 };
 
 export default Results2Page;
+
