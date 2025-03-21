@@ -16,6 +16,15 @@ interface ResultCardProps {
 const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   const isTopChoice = rank === 1;
   
+  // Function to decode HTML entities
+  const decodeHtml = (html: string | undefined): string => {
+    if (!html) return '';
+    
+    const txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
+  };
+  
   return (
     <div className={cn(
       "bg-white rounded-xl shadow-sm border overflow-hidden transition-all duration-300 mb-6",
@@ -58,7 +67,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
                   {provider.name}
                 </h3>
                 {provider.rate && (
-                  <p className="text-gray-600">{provider.rate}</p>
+                  <p className="text-gray-600">{decodeHtml(provider.rate)}</p>
                 )}
               </div>
             </div>
