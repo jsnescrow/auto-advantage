@@ -138,6 +138,47 @@ export const triggerPostback = async (formState: any): Promise<boolean> => {
   }
 };
 
+// Function to track conversions when a user clicks on a provider link
+export const trackProviderClick = async (provider: Provider, zipCode: string): Promise<void> => {
+  try {
+    const clickId = localStorage.getItem("clickId");
+    
+    // If we have a clickId stored, we can use it for conversion tracking
+    if (clickId) {
+      const conversionUrl = `https://n8n.f4growth.co/webhook-test/quinstreet-conversion-v1`;
+      
+      const params = new URLSearchParams({
+        cid: clickId,
+        event: "click",
+        revenue: "0", // You might want to pass actual revenue values if available
+        currency: "USD",
+        provider: provider.name,
+        provider_id: provider.id,
+        zip: zipCode
+      });
+      
+      const fullUrl = `${conversionUrl}?${params.toString()}`;
+      console.log("Tracking conversion:", fullUrl);
+      
+      await fetch(fullUrl, {
+        method: "GET",
+        mode: "no-cors"
+      });
+      
+      console.log("Conversion tracked successfully");
+    } else {
+      console.log("No clickId found, skipping conversion tracking");
+    }
+    
+    // Continue with the original action (opening the URL)
+    window.open(provider.url, '_blank');
+  } catch (error) {
+    console.error("Error tracking conversion:", error);
+    // Still open the URL even if tracking fails
+    window.open(provider.url, '_blank');
+  }
+};
+
 // Transform API response to our Provider format
 const transformApiResponse = (apiResponse: any): Provider[] => {
   if (!apiResponse?.response?.listingset?.listing || !Array.isArray(apiResponse.response.listingset.listing)) {
@@ -177,6 +218,14 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
 
     const data = await response.json();
     console.log('API response:', data);
+    
+    // Store the clickId if it's in the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const clickId = urlParams.get('cid') || urlParams.get('clickId');
+    if (clickId) {
+      localStorage.setItem("clickId", clickId);
+      console.log("Stored clickId:", clickId);
+    }
     
     // Trigger the postback after receiving a successful response
     triggerPostback(formData)

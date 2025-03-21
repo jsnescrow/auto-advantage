@@ -9,11 +9,16 @@ import { Link } from 'react-router-dom';
 
 const ResultsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { resetForm } = useFormContext();
+  const { formState, resetForm } = useFormContext();
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Store formState in sessionStorage for access by the ResultCard component
+    if (formState) {
+      sessionStorage.setItem('formData', JSON.stringify(formState));
+    }
+    
     // Retrieve providers from sessionStorage
     const storedProviders = sessionStorage.getItem('insuranceProviders');
     
@@ -26,13 +31,21 @@ const ResultsPage: React.FC = () => {
       }
     }
     
+    // Check for click ID in URL params and store it if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const clickId = urlParams.get('cid') || urlParams.get('clickId');
+    if (clickId) {
+      localStorage.setItem("clickId", clickId);
+      console.log("Stored clickId from URL:", clickId);
+    }
+    
     // Simulate loading time for a smoother transition
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [formState]);
 
   if (loading) {
     return (

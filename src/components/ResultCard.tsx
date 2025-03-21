@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { trackProviderClick } from '@/utils/api';
 
 interface ResultCardProps {
   provider: {
@@ -9,6 +10,7 @@ interface ResultCardProps {
     rate?: string;
     url: string;
     logo?: string;
+    id: string;
   };
   rank: number;
 }
@@ -45,6 +47,17 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
     const txt = document.createElement('textarea');
     txt.innerHTML = html;
     return txt.value;
+  };
+  
+  const handleProviderClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Get zip code from sessionStorage
+    const formData = sessionStorage.getItem('formData');
+    const zipCode = formData ? JSON.parse(formData).zipCode : '';
+    
+    // Track the click and then navigate
+    trackProviderClick(provider, zipCode);
   };
   
   return (
@@ -100,7 +113,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
               {isTopChoice ? (
                 <Button
                   className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 relative overflow-hidden group"
-                  onClick={() => window.open(provider.url, '_blank')}
+                  onClick={handleProviderClick}
                 >
                   VIEW RATES
                   <div className="absolute inset-0 overflow-hidden">
@@ -110,7 +123,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
               ) : (
                 <Button
                   className="bg-brand-500 hover:bg-brand-600 text-white font-medium"
-                  onClick={() => window.open(provider.url, '_blank')}
+                  onClick={handleProviderClick}
                 >
                   VIEW RATES
                 </Button>
