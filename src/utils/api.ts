@@ -36,29 +36,44 @@ export const fetchWithRetry = async (
   console.log('With form data:', formData);
   
   let retries = 0;
+  
+  // Remove any existing data to avoid confusion
+  sessionStorage.removeItem('insuranceProviders');
+  
   while (retries < maxRetries) {
     try {
-      console.log(`Attempt ${retries + 1}: Fetching data...`);
+      console.log(`Attempt ${retries + 1}: Fetching data from ${apiUrl}...`);
       
-      // Make the actual API request
+      // Create the actual API request with the correct endpoint
+      const requestData = {
+        zipcode: formData.zipCode,
+        state: 'Texas', // For testing, hardcoding to match your screenshot
+        vehicleCount: formData.vehicleCount,
+        homeowner: formData.homeowner,
+        currentlyInsured: formData.currentlyInsured,
+        currentCarrier: formData.currentCarrier,
+        creditScore: formData.creditScore,
+        militaryAffiliation: formData.militaryAffiliation
+      };
+      
+      console.log('Sending request data:', JSON.stringify(requestData));
+      
+      // Make the fetch request with proper configuration
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          zipcode: formData.zipCode,
-          state: 'Texas', // For testing, hardcoding to match your screenshot
-          vehicleCount: formData.vehicleCount,
-          homeowner: formData.homeowner,
-          currentlyInsured: formData.currentlyInsured,
-          currentCarrier: formData.currentCarrier,
-          creditScore: formData.creditScore,
-          militaryAffiliation: formData.militaryAffiliation
-        }),
+        body: JSON.stringify(requestData),
+        // Add these to ensure the request is actually sent
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'omit'
       });
       
       if (!response.ok) {
+        console.error(`API responded with status: ${response.status}`);
         throw new Error(`API responded with status: ${response.status}`);
       }
       
@@ -77,11 +92,11 @@ export const fetchWithRetry = async (
           logo: item.logo || ''
         }));
         
-        console.log('Transformed providers:', providers);
+        console.log('Transformed providers from API:', providers);
         
         // Store the providers in sessionStorage for use in the results pages
         sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
-        console.log('Stored providers in sessionStorage:', providers);
+        console.log('Stored API providers in sessionStorage:', providers);
         
         // Check CPC value of the top provider to determine which results page to show
         const topProviderCpc = typeof providers[0].cpc === 'number' 

@@ -96,13 +96,16 @@ const FormPage: React.FC = () => {
       sessionStorage.removeItem('insuranceProviders');
       console.log('Cleared existing providers from sessionStorage');
       
-      // Fetch providers data
-      console.log('Calling fetchWithRetry with form data:', formState);
+      // Force a small delay so any UI updates can happen before the network request
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Fetch providers data with more detailed logging
+      console.log('STARTING API CALL to fetch providers...');
       const response = await fetchWithRetry(formState, 3, 1000);
-      console.log('API response received:', response);
+      console.log('API CALL COMPLETED with response:', response);
       
       if (response.success && response.providers && response.providers.length > 0) {
-        console.log('Providers returned from API:', response.providers);
+        console.log('Success! Providers returned:', response.providers);
         
         // Double-check the providers are getting saved
         const savedProviders = sessionStorage.getItem('insuranceProviders');
@@ -527,4 +530,3 @@ const FormPage: React.FC = () => {
 };
 
 export default FormPage;
-
