@@ -14,7 +14,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { CarFront } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-// Insurance carriers
 const INSURANCE_CARRIERS = [
   'AAA INSURANCE CO',
   'ALLSTATE INSURANCE',
@@ -142,27 +141,21 @@ const FormPage: React.FC = () => {
                 value="1"
                 selected={formState.vehicleCount === '1'}
                 onClick={() => handleOptionSelect(setVehicleCount, '1')}
-                icon={
-                  <CarFront className="w-10 h-10 text-brand-500" />
-                }
+                iconCount={1}
               />
               <OptionCard
                 option="Two"
                 value="2"
                 selected={formState.vehicleCount === '2'}
                 onClick={() => handleOptionSelect(setVehicleCount, '2')}
-                icon={
-                  <CarFront className="w-10 h-10 text-brand-500" />
-                }
+                iconCount={2}
               />
               <OptionCard
                 option="Three +"
                 value="3+"
                 selected={formState.vehicleCount === '3+'}
                 onClick={() => handleOptionSelect(setVehicleCount, '3+')}
-                icon={
-                  <CarFront className="w-10 h-10 text-brand-500" />
-                }
+                iconCount={3}
               />
             </div>
           </div>
@@ -489,7 +482,6 @@ const FormPage: React.FC = () => {
             {renderStep()}
           </FormCard>
           
-          {/* For development - Test Data Button */}
           {process.env.NODE_ENV === 'development' && (
             <div className="mt-4 text-center">
               <button 
