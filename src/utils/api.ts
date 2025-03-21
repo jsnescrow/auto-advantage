@@ -235,26 +235,38 @@ const transformApiResponse = (apiResponse: any): Provider[] => {
 
 // Send request to the API
 export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseData> => {
+  // Define the correct API URL explicitly
   const apiUrl = 'https://nextinsure.quinstage.com/listingdisplay/listings';
   const requestData = formatRequestData(formData);
   
-  console.log('Sending API request to:', apiUrl);
+  console.log('DIRECT API REQUEST');
+  console.log('API URL:', apiUrl);
   console.log('Request data:', JSON.stringify(requestData, null, 2));
   
   try {
     // Store form data in session storage for later use
     sessionStorage.setItem('formData', JSON.stringify(formData));
     
+    // Verify we're not being redirected by adding a timestamp
+    const urlWithTimestamp = `${apiUrl}?t=${Date.now()}`;
+    console.log('Making request to:', urlWithTimestamp);
+    
     // Make a real request to the API with proper headers
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(requestData),
+      // Add a redirect mode to follow redirects
+      redirect: 'follow'
     });
 
     console.log('API response status:', response.status);
+    console.log('API response headers:', Object.fromEntries([...response.headers.entries()]));
     
     if (!response.ok) {
       console.error('API error:', response.status, response.statusText);
@@ -264,7 +276,7 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
     const data = await response.json();
     console.log('API response data:', data);
     
-    // Store the clickId if it's in the URL query parameters
+    // Store the clickId if it's in the URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const clickId = urlParams.get('cid') || urlParams.get('clickid');
     if (clickId) {
@@ -334,4 +346,31 @@ export const fetchWithRetry = async (
     success: false,
     error: 'Maximum retries reached. Please try again later.'
   };
+};
+
+// Add a direct test function to debug network issues
+export const testApiEndpoint = async () => {
+  const apiUrl = 'https://nextinsure.quinstage.com/listingdisplay/listings';
+  console.log('Testing API endpoint connection:', apiUrl);
+  
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'HEAD',
+      headers: {
+        'Cache-Control': 'no-cache',
+      },
+    });
+    
+    console.log('API endpoint test result:', {
+      ok: response.ok,
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries([...response.headers.entries()])
+    });
+    
+    return response.ok;
+  } catch (error) {
+    console.error('API endpoint test failed:', error);
+    return false;
+  }
 };

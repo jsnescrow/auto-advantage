@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -10,7 +9,7 @@ import { useFormContext } from '@/context/FormContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { fetchWithRetry } from '@/utils/api';
+import { fetchWithRetry, testApiEndpoint } from '@/utils/api';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
@@ -53,6 +52,13 @@ const FormPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [zipError, setZipError] = useState('');
 
+  useEffect(() => {
+    const testApi = async () => {
+      await testApiEndpoint();
+    };
+    testApi();
+  }, []);
+
   const handleOptionSelect = (setter: Function, value: any) => {
     setter(value);
     
@@ -88,17 +94,27 @@ const FormPage: React.FC = () => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+      console.log('====== FORM SUBMISSION STARTED ======');
+      console.log('Current form state:', formState);
       
       // Store form data in sessionStorage for access in the results page
       sessionStorage.setItem('formData', JSON.stringify(formState));
-      console.log('Form data stored in sessionStorage:', formState);
+      console.log('Form data stored in sessionStorage');
       
+      // Test the API connection first
+      const apiTestResult = await testApiEndpoint();
+      console.log('API test result:', apiTestResult);
+      
+      console.log('Fetching insurance quotes...');
       const response = await fetchWithRetry(formState);
+      console.log('API response received:', response);
       
       if (response.success && response.providers) {
+        console.log('Providers received:', response.providers.length);
         sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
         navigate('/results');
       } else {
+        console.error('API request failed or no providers returned:', response.error);
         toast.error('No insurance providers found. Please try different criteria.');
         setIsLoading(false);
       }
