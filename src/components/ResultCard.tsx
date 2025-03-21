@@ -13,6 +13,7 @@ interface ResultCardProps {
 const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink = false }) => {
   const isTopChoice = rank === 1;
   const [visitorCount, setVisitorCount] = useState<number>(0);
+  const [logoError, setLogoError] = useState(false);
   
   useEffect(() => {
     if (isTopChoice) {
@@ -65,6 +66,10 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
     trackProviderClick(provider, zipCode);
   };
   
+  const handleImageError = () => {
+    setLogoError(true);
+  };
+  
   console.log("Rendering ResultCard for provider:", provider);
   
   return (
@@ -97,8 +102,13 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
                 "flex-shrink-0 w-20 h-20 rounded-md flex items-center justify-center p-2",
                 "bg-white border border-gray-100"
               )}>
-                {provider.logo ? (
-                  <img src={provider.logo} alt={provider.name} className="max-w-full max-h-full object-contain" />
+                {provider.logo && !logoError ? (
+                  <img 
+                    src={provider.logo} 
+                    alt={provider.name} 
+                    className="max-w-full max-h-full object-contain" 
+                    onError={handleImageError}
+                  />
                 ) : (
                   <div className="text-xl font-bold text-brand-500">
                     {provider.name.substring(0, 2).toUpperCase()}
