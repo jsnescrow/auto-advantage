@@ -151,7 +151,7 @@
 
 /* Add padding to the bottom of the page content to prevent footer from covering content */
 .footer-space {
-  padding-bottom: 8rem; /* Increased padding to create more space */
+  padding-bottom: 20rem; /* Significantly increased padding to create much more space */
 }
 
 /* Animation for pulsing button - updated for zoom effect */

@@ -35,20 +35,20 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
       {/* Rank indicator */}
       <div className="absolute top-0 left-0 flex items-center">
         <div className={cn(
-          "flex items-center justify-center w-8 h-8 text-white font-bold",
+          "flex items-center justify-center w-7 h-7 text-white font-bold text-sm",
           isTopChoice ? "bg-black" : "bg-gray-600"
         )}>
           {rank}
         </div>
         
         {isTopChoice && (
-          <div className="bg-brand-500 py-1 px-3 text-white text-sm font-medium ml-1">
+          <div className="bg-brand-500 h-7 py-1 px-3 text-white text-xs font-medium ml-1 flex items-center">
             Our Top Choice
           </div>
         )}
       </div>
       
-      <div className="p-4 md:p-6 mt-6">
+      <div className="p-4 md:p-6 mt-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
             <div className={cn(
@@ -95,8 +95,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
       </div>
       
       {isTopChoice && (
-        <div className="flex justify-center">
-          <div className="bg-white py-2 px-4 text-center shadow-md rounded-full -mb-4 border border-gray-100 inline-block">
+        <div className="flex justify-center mt-3 mb-2">
+          <div className="bg-white py-2 px-4 text-center shadow-md rounded-full border border-gray-100 inline-block">
             <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
