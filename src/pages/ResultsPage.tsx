@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -37,7 +36,7 @@ const ResultsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-brand-800 to-brand-900">
+      <div className="min-h-screen flex flex-col bg-white">
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center mb-8">
             <Logo />
@@ -73,24 +72,28 @@ const ResultsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-brand-800 to-brand-900">
+    <div className="min-h-screen flex flex-col bg-white">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <Logo />
         </div>
         
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10 animate-fade-in">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Your Top Car Insurance Matches
+            <div className="text-sm text-gray-500 mb-1">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              Compare Multiple Quotes To Find Your Best Rate
             </h1>
-            <p className="text-xl text-white/80">
-              Based on your information, we found these options for you
+            <p className="text-xl text-gray-700 font-medium mb-1">
+              Drive easy knowing you're covered
+            </p>
+            <p className="text-gray-600 max-w-lg mx-auto">
+              It's time to upgrade your auto insurance! Compare discounted plans from these trusted providers, and hit the road with peace of mind.
             </p>
           </div>
           
           {providers.length > 0 ? (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-6 animate-fade-in mb-12">
               {providers.map((provider, index) => (
                 <ResultCard 
                   key={provider.id} 
@@ -119,16 +122,9 @@ const ResultsPage: React.FC = () => {
               </button>
             </FormCard>
           )}
-        </div>
-      </div>
-      
-      <div className="mt-auto py-8 bg-black/10 backdrop-blur-sm border-t border-white/10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-white mb-4">Understanding Car Insurance: Your Complete Guide</h2>
-            <p className="text-white/80 mb-6">
-              Shopping for car insurance shouldn't be overwhelming. With today's online tools, finding the right coverage is easier than ever. Let's explore the essentials you need to know before making your decision, so you can drive with complete confidence.
-            </p>
+          
+          <div className="bg-gray-50 rounded-lg p-6 mb-12">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Understanding Car Insurance: Your Complete Guide</h2>
             
             <div className="space-y-6 text-white/80 mb-10">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
@@ -233,8 +229,7 @@ const ResultsPage: React.FC = () => {
         </div>
       </div>
       
-      {/* Footer Section */}
-      <footer className="bg-gray-900 text-white/70 py-8">
+      <footer className="bg-gray-100 text-gray-600 py-8 border-t border-gray-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-sm mb-6">
@@ -245,9 +240,9 @@ const ResultsPage: React.FC = () => {
                 Disclaimer: The operator of this website is not an insurance broker or an insurance company, is not a representative or an agent to any broker or insurance company, does not endorse any particular broker or insurance provider, and does not make any insurance decisions. We will submit the information you provide to a broker and/or an insurance company. This website does not constitute an offer or solicitation for automobile or other insurance. Providing your information on this site does not guarantee that you will be approved for automobile or other insurance. Not all insurance providers can or will insure your vehicle. The quotes, rates, or savings advertised on this website are not necessarily available from all providers or advertisers. Your actual quotes, rates, or savings will vary based on many different factors like: Coverage Limits, Deductibles, Driving History, Education, Occupation Type, Vehicle Location, and more. For questions regarding your insurance policy, please contact your broker or insurance company directly. Residents of some states may not be eligible for insurance or may be subject to large premiums. You are under no obligation to use our website or service to initiate contact nor apply for insurance or any product with any broker or insurance company. We receive compensation in the form of referral fees from the insurance carriers, aggregators, or other offers that we direct you to. Therefore, the amount of compensation provided, along with other factors, may impact which policy or offer you are presented. The offer you receive may be coming from the company that bid the most for your information. This website does not always provide you with an offer with the best rates or terms. Our website does not include all companies or all available offers. We encourage you to research all available insurance policy options relative to your situation. All trademarks and copyrights are the property of their respective owners.
               </p>
             </div>
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-white/80">
-              <Link to="/terms" className="hover:text-brand-400 transition-colors">Terms & Conditions</Link>
-              <Link to="/privacy" className="hover:text-brand-400 transition-colors">Privacy Policy</Link>
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-brand-600">
+              <Link to="/terms" className="hover:text-brand-800 transition-colors">Terms & Conditions</Link>
+              <Link to="/privacy" className="hover:text-brand-800 transition-colors">Privacy Policy</Link>
             </div>
             <div className="text-center mt-6 text-sm">
               &copy; {new Date().getFullYear()} AutoRateSaver. All rights reserved.
@@ -260,3 +255,4 @@ const ResultsPage: React.FC = () => {
 };
 
 export default ResultsPage;
+

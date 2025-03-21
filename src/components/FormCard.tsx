@@ -10,10 +10,10 @@ interface FormCardProps {
 const FormCard: React.FC<FormCardProps> = ({ children, className = '' }) => {
   return (
     <div className={cn(
-      "w-full max-w-xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in",
+      "w-full max-w-xl mx-auto bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden animate-fade-in",
       className
     )}>
-      <div className="p-6 md:p-8">
+      <div className="p-6">
         {children}
       </div>
     </div>

@@ -54,16 +54,16 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				brand: {
-					50: '#e6f7f6',
-					100: '#ccf0ed',
-					200: '#99e0db',
-					300: '#66d1c9',
-					400: '#39c2b8',
-					500: '#2bae9f',
-					600: '#1e8a7e',
-					700: '#16675e',
-					800: '#0e443f',
-					900: '#07221f',
+					50: '#eaf8ff',
+					100: '#d6f0ff',
+					200: '#ade1ff',
+					300: '#75c6ff',
+					400: '#3ba3ff',
+					500: '#2486ff', // Main brand color - blue
+					600: '#1a65d9',
+					700: '#1950af',
+					800: '#194587',
+					900: '#1a3b6d',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

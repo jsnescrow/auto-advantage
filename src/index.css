@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 175 60% 42%;
+    --primary: 215 98% 55%; /* Blue for buttons */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 175 17% 95%;
-    --secondary-foreground: 175 60% 30%;
+    --secondary: 210 20% 98%; /* Very light blue/gray */
+    --secondary-foreground: 215 70% 35%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 175 60% 42%;
+    --accent: 215 98% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -30,9 +31,9 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 175 60% 42%;
+    --ring: 215 98% 55%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem; /* Reduced radius for a cleaner look */
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -54,7 +55,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 175 60% 42%;
+    --primary: 215 98% 55%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -94,11 +95,11 @@
   }
 
   .option-card {
-    @apply w-full border border-border rounded-lg p-6 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-brand-500 cursor-pointer;
+    @apply w-full border border-gray-200 rounded-md p-4 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-brand-500 cursor-pointer;
   }
 
   .option-card.selected {
-    @apply border-brand-500 bg-secondary text-secondary-foreground shadow-md ring-2 ring-brand-500 ring-opacity-50;
+    @apply border-brand-500 bg-blue-50 text-brand-700 shadow-sm;
   }
 }
 
