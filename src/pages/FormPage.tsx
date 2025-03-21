@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -93,7 +92,8 @@ const FormPage: React.FC = () => {
       sessionStorage.setItem('formData', JSON.stringify(formState));
       console.log('Form data stored in sessionStorage:', formState);
       
-      const response = await fetchWithRetry(formState);
+      // Update the fetchWithRetry call to include the required arguments
+      const response = await fetchWithRetry(formState, 3, 1000);
       
       if (response.success && response.providers) {
         sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
@@ -508,3 +508,4 @@ const FormPage: React.FC = () => {
 };
 
 export default FormPage;
+
