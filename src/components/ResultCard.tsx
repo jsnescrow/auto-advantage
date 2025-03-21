@@ -26,7 +26,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   };
   
   return (
-    <div className="relative mb-24">
+    <div className="relative mb-12">
       <div className={cn(
         "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300",
         isTopChoice 
