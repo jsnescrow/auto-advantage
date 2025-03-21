@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -98,13 +97,14 @@ const FormPage: React.FC = () => {
       
       // Fetch providers data
       const response = await fetchWithRetry(formState, 3, 1000);
-      console.log('API response:', response);
+      console.log('FULL API response:', response);
       
       if (response.success && response.providers && response.providers.length > 0) {
-        console.log('Providers returned from API:', response.providers);
+        console.log('RECEIVED PROVIDERS from API:', JSON.stringify(response.providers));
         
-        // Re-store providers to ensure they're properly saved
-        sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
+        // Double-check the providers are getting saved
+        const savedProviders = sessionStorage.getItem('insuranceProviders');
+        console.log('SAVED PROVIDERS in sessionStorage:', savedProviders);
         
         // Determine which results page to show based on the API response
         if (response.useAlternateResults) {

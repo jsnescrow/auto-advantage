@@ -73,16 +73,19 @@ export const fetchWithRetry = async (
           },
         ];
         
+        // Explicitly log what we're storing
+        console.log('PROVIDERS TO BE STORED:', JSON.stringify(providers));
+        
+        // Store the providers in sessionStorage for use in the results pages
+        sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
+        console.log('Stored providers in sessionStorage:', providers);
+        
         // Check CPC value of the top provider to determine which results page to show
         const topProviderCpc = typeof providers[0].cpc === 'number' 
           ? providers[0].cpc 
           : parseFloat(providers[0].cpc as string);
           
         const shouldUseAlternateResults = topProviderCpc < 6;
-        
-        // Store the providers in sessionStorage for use in the results pages
-        sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
-        console.log('Stored providers in sessionStorage:', providers);
         
         return { 
           success: true, 
