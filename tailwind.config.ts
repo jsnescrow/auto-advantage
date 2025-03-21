@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -174,7 +173,7 @@ export default {
 						transform: 'translateX(-200%) skewX(-45deg)'
 					},
 					'100%': {
-						transform: 'translateX(200%) skewX(-45deg)'
+						transform: 'translateX(300%) skewX(-45deg)'
 					}
 				}
 			},
