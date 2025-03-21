@@ -55,22 +55,23 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
     // For API providers, use our tracking system
     e.preventDefault();
     console.log("VIEW RATES button clicked for provider:", provider.name, "with ID:", provider.id);
-    console.log("Provider data for tracking:", { rank: provider.rank, cpc: provider.cpc });
     
     // Get zip code from sessionStorage
     const formData = sessionStorage.getItem('formData');
     const zipCode = formData ? JSON.parse(formData).zipCode : '';
-    console.log("Using zip code for tracking:", zipCode);
     
     // Track the click and then navigate - this will now trigger the postback with all data
     trackProviderClick(provider, zipCode);
   };
   
   const handleImageError = () => {
+    console.log(`Image failed to load for provider: ${provider.name}`);
     setLogoError(true);
   };
   
-  console.log("Rendering ResultCard for provider:", provider);
+  // Use a fallback image URL that's guaranteed to work
+  const fallbackImageUrl = 'https://placehold.co/200x200/EAEAEA/999999?text=' + 
+    encodeURIComponent(provider.name.substring(0, 2).toUpperCase());
   
   return (
     <div className="relative mb-12">
@@ -102,9 +103,9 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
                 "flex-shrink-0 w-20 h-20 rounded-md flex items-center justify-center p-2",
                 "bg-white border border-gray-100"
               )}>
-                {provider.logo && !logoError ? (
+                {!logoError ? (
                   <img 
-                    src={provider.logo} 
+                    src={provider.logo || fallbackImageUrl} 
                     alt={provider.name} 
                     className="max-w-full max-h-full object-contain" 
                     onError={handleImageError}
@@ -126,14 +127,14 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
               </div>
             </div>
             
-            <div className="flex-shrink-0 mb-6">
+            <div className="w-full md:w-auto flex-shrink-0">
               {useDirectLink ? (
                 <a 
                   href={provider.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "inline-flex items-center justify-center rounded-md text-sm font-medium",
+                    "w-full md:w-auto inline-flex items-center justify-center rounded-md text-sm font-medium",
                     "transition-colors focus-visible:outline-none focus-visible:ring-2",
                     "focus-visible:ring-ring focus-visible:ring-offset-2",
                     "bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 py-2",
@@ -150,7 +151,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
               ) : (
                 <Button
                   className={cn(
-                    "bg-brand-500 hover:bg-brand-600 text-white font-medium",
+                    "w-full md:w-auto bg-brand-500 hover:bg-brand-600 text-white font-medium",
                     isTopChoice ? "px-6 relative overflow-hidden group" : ""
                   )}
                   onClick={handleProviderClick}
