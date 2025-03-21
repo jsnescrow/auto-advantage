@@ -27,7 +27,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   
   return (
     <div className={cn(
-      "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300 mb-6 relative",
+      "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300 mb-12 relative",
       isTopChoice 
         ? "border-gray-200" 
         : "border-gray-200"
@@ -94,17 +94,15 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
         </div>
       </div>
       
-      {/* Visitor counter badge - correctly positioned to overlay the card's bottom border */}
+      {/* Visitor counter badge - correctly positioned at the bottom */}
       {isTopChoice && (
-        <div className="mb-4 relative">
-          <div className="absolute left-1/2 transform -translate-x-1/2 translate-y-1/2" style={{ bottom: "-12px" }}>
-            <div className="bg-white py-2 px-4 text-center shadow-md rounded-full border border-gray-100">
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-                <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
-              </div>
+        <div className="absolute left-0 right-0 bottom-0 transform translate-y-1/2 flex justify-center">
+          <div className="bg-white py-1.5 px-4 text-center shadow-md rounded-full border border-gray-100">
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+              <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
             </div>
           </div>
         </div>
