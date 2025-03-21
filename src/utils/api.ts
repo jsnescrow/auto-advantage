@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 // Define interfaces for the API request and response
@@ -110,6 +109,35 @@ export const formatRequestData = (formState: any): ApiRequestData => {
   };
 };
 
+// Function to trigger the postback
+export const triggerPostback = async (formState: any): Promise<boolean> => {
+  try {
+    const postbackUrl = "https://n8n.f4growth.co/webhook-test/quinstreet-postback-prod-v1";
+    
+    // Add any query parameters you want to send with the GET request
+    const params = new URLSearchParams({
+      ni_ad_client: "701117",
+      ni_zc: formState.zipCode || "",
+      timestamp: new Date().toISOString(),
+    });
+    
+    const fullUrl = `${postbackUrl}?${params.toString()}`;
+    console.log("Triggering postback:", fullUrl);
+    
+    const response = await fetch(fullUrl, {
+      method: "GET",
+      // Using no-cors mode as this is likely a cross-origin request
+      mode: "no-cors"
+    });
+    
+    console.log("Postback triggered successfully");
+    return true;
+  } catch (error) {
+    console.error("Error triggering postback:", error);
+    return false;
+  }
+};
+
 // Transform API response to our Provider format
 const transformApiResponse = (apiResponse: any): Provider[] => {
   if (!apiResponse?.response?.listingset?.listing || !Array.isArray(apiResponse.response.listingset.listing)) {
@@ -149,6 +177,16 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
 
     const data = await response.json();
     console.log('API response:', data);
+    
+    // Trigger the postback after receiving a successful response
+    triggerPostback(formData)
+      .then(success => {
+        if (success) {
+          console.log("Postback was triggered successfully");
+        } else {
+          console.warn("Postback trigger failed, but continuing with quote display");
+        }
+      });
     
     // Transform the response to our expected format
     const providers = transformApiResponse(data);
