@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -470,7 +469,7 @@ const FormPage: React.FC = () => {
           </h1>
         </div>
         
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-xl mx-auto footer-space">
           <ProgressBar currentStep={currentStep} totalSteps={getTotalSteps()} />
           
           <FormCard className={isMobile ? "p-4" : ""}>
@@ -479,7 +478,7 @@ const FormPage: React.FC = () => {
         </div>
       </div>
       
-      <footer className="bg-gray-100 text-gray-600 py-8 border-t border-gray-200 mt-auto">
+      <footer className="bg-gray-100 text-gray-600 py-8 border-t border-gray-200 fixed-footer">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-sm mb-6">

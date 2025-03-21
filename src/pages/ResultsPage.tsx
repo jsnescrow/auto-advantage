@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -81,13 +80,9 @@ const ResultsPage: React.FC = () => {
         
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10 animate-fade-in">
-            <div className="text-sm text-gray-500 mb-1">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">
               Your Top Car Insurance Matches
             </h1>
-            <p className="text-xl text-gray-700 font-medium mb-1">
-              Based on your information, we found these options for you.
-            </p>
           </div>
           
           {providers.length > 0 ? (
@@ -121,7 +116,7 @@ const ResultsPage: React.FC = () => {
             </FormCard>
           )}
           
-          <div className="bg-gray-50 rounded-lg p-6 mb-12">
+          <div className="bg-gray-50 rounded-lg p-4 md:p-6 mb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Understanding Car Insurance: Your Complete Guide</h2>
             
             <div className="space-y-6 text-gray-700 mb-10">

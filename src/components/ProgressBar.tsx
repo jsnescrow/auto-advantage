@@ -7,14 +7,26 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ currentStep, totalSteps }) => {
-  const progress = (currentStep / totalSteps) * 100;
+  // Modified progress calculation to make the form appear shorter
+  let progress = 0;
+  
+  if (currentStep === 1) {
+    progress = 20; // Initial state
+  } else if (currentStep === 2) {
+    progress = 54; // After first question
+  } else if (currentStep === 3) {
+    progress = 75; // After second question
+  } else {
+    // Distribute remaining progress evenly
+    const remainingSteps = totalSteps - 3;
+    const remainingProgress = 100 - 75;
+    const progressPerStep = remainingProgress / (remainingSteps > 0 ? remainingSteps : 1);
+    progress = 75 + ((currentStep - 3) * progressPerStep);
+  }
   
   return (
     <div className="w-full mb-4 animate-fade-in">
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium text-gray-600">
-          Step {currentStep} of {totalSteps}
-        </span>
+      <div className="flex justify-end items-center mb-2">
         <span className="text-sm font-medium text-brand-500">
           {Math.round(progress)}% Complete
         </span>

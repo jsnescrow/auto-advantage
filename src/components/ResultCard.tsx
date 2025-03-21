@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Check } from 'lucide-react';
 
 interface ResultCardProps {
   provider: {
@@ -28,18 +27,28 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   
   return (
     <div className={cn(
-      "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300 mb-6",
+      "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300 mb-6 relative",
       isTopChoice 
-        ? "border-brand-300" 
+        ? "border-gray-200" 
         : "border-gray-200"
     )}>
-      {isTopChoice && (
-        <div className="bg-brand-500 py-1 px-3 text-white text-sm font-medium">
-          Our Top Choice
+      {/* Rank indicator */}
+      <div className="absolute top-0 left-0">
+        <div className={cn(
+          "flex items-center justify-center w-8 h-8 text-white font-bold",
+          isTopChoice ? "bg-black" : "bg-gray-600"
+        )}>
+          {rank}
         </div>
-      )}
+        
+        {isTopChoice && (
+          <div className="bg-emerald-500 py-1 px-3 text-white text-sm font-medium">
+            Our Top Choice
+          </div>
+        )}
+      </div>
       
-      <div className="p-4 md:p-6">
+      <div className="p-4 md:p-6 mt-2">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
             <div className={cn(
@@ -68,7 +77,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
           <div className="flex-shrink-0">
             {isTopChoice ? (
               <Button
-                className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 animate-pulse-slow"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-6 animate-pulse-slow"
                 onClick={() => window.open(provider.url, '_blank')}
               >
                 VIEW RATES
@@ -86,12 +95,14 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
       </div>
       
       {isTopChoice && (
-        <div className="bg-gray-50 py-2 px-4 text-center border-t border-gray-100">
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-brand-500">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-            </svg>
-            <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
+        <div className="flex justify-center">
+          <div className="bg-white py-2 px-4 text-center shadow-md rounded-full -mb-4 border border-gray-100 inline-block">
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-emerald-500">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+              <span><span className="font-semibold">1,906</span> drivers visited this site today</span>
+            </div>
           </div>
         </div>
       )}
