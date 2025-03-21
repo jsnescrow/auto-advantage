@@ -1,4 +1,5 @@
 import { toast } from "sonner";
+import { NavigateFunction } from "react-router-dom";
 
 // Define interfaces for the API request and response
 interface TrackingData {
@@ -315,9 +316,32 @@ export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseDa
   }
 };
 
+// Decide which results page to route to based on CPC value
+export const determineResultsRoute = (providers: Provider[]): string => {
+  if (!providers || providers.length === 0) {
+    return '/results'; // Default to normal results if no providers
+  }
+  
+  // Find the provider with rank 1
+  const topProvider = providers.find(p => p.rank === '1') || providers[0];
+  
+  // Check if the CPC value is less than $6
+  if (topProvider.cpc) {
+    const cpcValue = parseFloat(topProvider.cpc);
+    if (!isNaN(cpcValue) && cpcValue < 6) {
+      console.log(`Top provider CPC ($${cpcValue}) is less than $6, routing to /results2`);
+      return '/results2';
+    }
+  }
+  
+  console.log('Using standard results page');
+  return '/results';
+};
+
 // Retry function with exponential backoff
 export const fetchWithRetry = async (
-  formData: any, 
+  formData: any,
+  navigate: NavigateFunction,
   maxRetries = 3, 
   baseDelay = 1000
 ): Promise<ApiResponseData> => {
@@ -326,7 +350,14 @@ export const fetchWithRetry = async (
   while (retries < maxRetries) {
     try {
       const result = await fetchInsuranceQuotes(formData);
-      if (result.success) {
+      if (result.success && result.providers) {
+        // Store the providers in sessionStorage for access by results pages
+        sessionStorage.setItem('insuranceProviders', JSON.stringify(result.providers));
+        
+        // Determine which results page to navigate to
+        const resultsRoute = determineResultsRoute(result.providers);
+        navigate(resultsRoute);
+        
         return result;
       }
       
@@ -342,6 +373,9 @@ export const fetchWithRetry = async (
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
+  
+  // If we've reached max retries, navigate to the default results page
+  navigate('/results');
   
   // If we've reached max retries
   return {

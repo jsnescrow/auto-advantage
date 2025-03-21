@@ -15,9 +15,10 @@ interface ResultCardProps {
     cpc?: string;
   };
   rank: number;
+  useDirectLink?: boolean;
 }
 
-const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
+const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink = false }) => {
   const isTopChoice = rank === 1;
   const [visitorCount, setVisitorCount] = useState<number>(0);
   
@@ -52,6 +53,13 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   };
   
   const handleProviderClick = (e: React.MouseEvent) => {
+    if (useDirectLink) {
+      // If this is a direct link provider (SmartFinancial or Coverage Professor),
+      // just follow the URL directly without tracking
+      return; // Let the normal link behavior happen
+    }
+    
+    // For API providers, use our tracking system
     e.preventDefault();
     console.log("VIEW RATES button clicked for provider:", provider.name, "with ID:", provider.id);
     console.log("Provider data for tracking:", { rank: provider.rank, cpc: provider.cpc });
@@ -115,22 +123,40 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
             </div>
             
             <div className="flex-shrink-0 mb-6">
-              {isTopChoice ? (
-                <Button
-                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 relative overflow-hidden group"
-                  onClick={handleProviderClick}
+              {useDirectLink ? (
+                <a 
+                  href={provider.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    "inline-flex items-center justify-center rounded-md text-sm font-medium",
+                    "transition-colors focus-visible:outline-none focus-visible:ring-2",
+                    "focus-visible:ring-ring focus-visible:ring-offset-2",
+                    "bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 py-2",
+                    isTopChoice ? "relative overflow-hidden group" : ""
+                  )}
                 >
                   VIEW RATES
-                  <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute inset-0 w-1/2 bg-white/20 transform -translate-x-full animate-shimmer-smooth"></div>
-                  </div>
-                </Button>
+                  {isTopChoice && (
+                    <div className="absolute inset-0 overflow-hidden">
+                      <div className="absolute inset-0 w-1/2 bg-white/20 transform -translate-x-full animate-shimmer-smooth"></div>
+                    </div>
+                  )}
+                </a>
               ) : (
                 <Button
-                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium"
+                  className={cn(
+                    "bg-brand-500 hover:bg-brand-600 text-white font-medium",
+                    isTopChoice ? "px-6 relative overflow-hidden group" : ""
+                  )}
                   onClick={handleProviderClick}
                 >
                   VIEW RATES
+                  {isTopChoice && (
+                    <div className="absolute inset-0 overflow-hidden">
+                      <div className="absolute inset-0 w-1/2 bg-white/20 transform -translate-x-full animate-shimmer-smooth"></div>
+                    </div>
+                  )}
                 </Button>
               )}
             </div>
