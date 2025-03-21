@@ -40,7 +40,20 @@ export const fetchWithRetry = async (
   let success = false;
   let responseData = null;
   
-  const apiUrl = 'https://api.findinsuranceoffers.com/v1/insurance/auto';
+  // Use a CORS proxy service to avoid CORS issues if that's the problem
+  // const apiUrl = 'https://api.findinsuranceoffers.com/v1/insurance/auto';
+  const apiUrl = 'https://cors-anywhere.herokuapp.com/https://api.findinsuranceoffers.com/v1/insurance/auto';
+  
+  // Log console message to confirm function is actually executing
+  console.log('⚠️ FETCH REQUEST STARTED - Check Network Tab Now ⚠️');
+
+  // Force a dummy fetch request to see if network tab is working
+  try {
+    await fetch('https://jsonplaceholder.typicode.com/todos/1');
+    console.log('Test fetch completed successfully');
+  } catch (e) {
+    console.error('Test fetch failed:', e);
+  }
   
   while (!success && retries < maxRetries) {
     try {
@@ -58,21 +71,35 @@ export const fetchWithRetry = async (
       };
       
       console.log('Sending API request with body:', JSON.stringify(requestBody));
+      console.log('Request URL:', apiUrl);
 
-      const response = await fetch(apiUrl, {
+      // Force the browser to not use cached results
+      const fetchOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'X-API-Key': 'TQecSzP3TZm3uzvU7SqP9u4aH9vVu7T8',
-          'Origin': window.location.origin
+          'Origin': window.location.origin,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         },
         body: JSON.stringify(requestBody),
         credentials: 'omit',
         mode: 'cors',
         cache: 'no-cache'
-      });
+      };
       
+      console.log('Fetch options:', fetchOptions);
+
+      // Create a visible event in the console to help debugging
+      console.time('API Request Duration');
+      
+      // Use the fetch API directly to ensure it appears in network tab
+      const response = await fetch(apiUrl, fetchOptions);
+      
+      console.timeEnd('API Request Duration');
       console.log('API response status:', response.status);
       
       if (response.ok) {
@@ -112,6 +139,9 @@ export const fetchWithRetry = async (
   
   if (!success) {
     console.error('All API attempts failed');
+    
+    // Instead of using fake data, let's provide a clear error message
+    // and return an empty array
     return { 
       success: false, 
       providers: [], 
@@ -135,60 +165,14 @@ export const fetchWithRetry = async (
   
   console.log('Transformed providers from API data:', providers);
   
-  // Fall back to some testing data only if API returned no providers
-  if (providers.length === 0) {
-    console.warn('API returned no providers, falling back to testing data');
-    
-    // Sample testing data to ensure the app still works
-    const testProviders: Provider[] = [
-      {
-        id: '1',
-        name: 'Elephant Insurance',
-        cpc: 4.30,
-        rank: 1,
-        rate: 'Get Instant Quote for Elephant',
-        url: 'https://www.elephant.com',
-        logo: 'https://www.insurancespecialists.com/wp-content/uploads/2020/06/elephant-insurance.jpg'
-      },
-      {
-        id: '2',
-        name: 'Ultimate Insurance',
-        cpc: 4.00,
-        rank: 2,
-        rate: 'Insurance As Low As $419/Mo',
-        url: 'https://ultimateinsurance.com',
-        logo: 'https://insurancethoughtleadership.com/wp-content/uploads/2020/02/cropped-ITL-logo-w-background-100.jpg'
-      },
-      {
-        id: '3',
-        name: 'Branch Insurance',
-        cpc: 3.80,
-        rank: 3,
-        rate: 'Bundle insurance with Branch',
-        url: 'https://branch.com',
-        logo: 'https://hireandretire.com/wp-content/uploads/2023/08/Branch-Insurance-Company-Review-2022.jpg'
-      }
-    ];
-    
-    sessionStorage.setItem('insuranceProviders', JSON.stringify(testProviders));
-    console.log('Stored fallback providers in sessionStorage:', testProviders);
-    
-    // Use alternate results for fallback data
-    return { 
-      success: true, 
-      providers: testProviders, 
-      useAlternateResults: true 
-    };
-  }
-  
   // Store the providers in sessionStorage for use in the results pages
   sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
   console.log('Stored API providers in sessionStorage:', providers);
   
   // Check CPC value of the top provider to determine which results page to show
-  const topProviderCpc = typeof providers[0].cpc === 'number' 
+  const topProviderCpc = typeof providers[0]?.cpc === 'number' 
     ? providers[0].cpc 
-    : parseFloat(String(providers[0].cpc).replace('$', ''));
+    : parseFloat(String(providers[0]?.cpc || '0').replace('$', ''));
     
   const shouldUseAlternateResults = topProviderCpc < 6;
   
