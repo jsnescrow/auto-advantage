@@ -89,6 +89,10 @@ const FormPage: React.FC = () => {
     try {
       setIsLoading(true);
       
+      // Store form data in sessionStorage for access in the results page
+      sessionStorage.setItem('formData', JSON.stringify(formState));
+      console.log('Form data stored in sessionStorage:', formState);
+      
       const response = await fetchWithRetry(formState);
       
       if (response.success && response.providers) {
