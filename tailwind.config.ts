@@ -126,6 +126,14 @@ export default {
 						opacity: '0.5'
 					}
 				},
+				'button-pulse': {
+					'0%, 100%': {
+						transform: 'scale(1)'
+					},
+					'50%': {
+						transform: 'scale(1.1)'
+					}
+				},
 				'spin-slow': {
 					'0%': {
 						transform: 'scale(1)'
@@ -160,6 +168,7 @@ export default {
 				'fade-in': 'fade-in 0.5s ease-out forwards',
 				'fade-out': 'fade-out 0.5s ease-out forwards',
 				'pulse-slow': 'pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'button-pulse': 'button-pulse 2s ease-in-out infinite',
 				'spin-slow': 'spin-slow 2s ease-in-out infinite',
 				'slide-in': 'slide-in 0.3s ease-out forwards',
 				'slide-out': 'slide-out 0.3s ease-out forwards'

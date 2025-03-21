@@ -65,15 +65,12 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
             
             <div className="flex-shrink-0">
               {isTopChoice ? (
-                <div className="relative">
-                  <Button
-                    className="bg-brand-500 hover:bg-brand-600 text-white font-medium relative z-10"
-                    onClick={() => window.open(provider.url, '_blank')}
-                  >
-                    VIEW RATES
-                  </Button>
-                  <span className="absolute inset-0 rounded-md animate-spin-slow bg-brand-500/10"></span>
-                </div>
+                <Button
+                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium animate-button-pulse"
+                  onClick={() => window.open(provider.url, '_blank')}
+                >
+                  VIEW RATES
+                </Button>
               ) : (
                 <Button
                   className="bg-gray-600 hover:bg-gray-700 text-white font-medium"
