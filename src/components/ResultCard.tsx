@@ -2,18 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { trackProviderClick } from '@/utils/api';
+import { trackProviderClick, Provider } from '@/utils/api';
 
 interface ResultCardProps {
-  provider: {
-    name: string;
-    rate?: string;
-    url: string;
-    logo?: string;
-    id: string;
-    rank?: string | number;
-    cpc?: string | number;
-  };
+  provider: Provider;
   rank: number;
   useDirectLink?: boolean;
 }
@@ -72,6 +64,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
     // Track the click and then navigate - this will now trigger the postback with all data
     trackProviderClick(provider, zipCode);
   };
+  
+  console.log("Rendering ResultCard for provider:", provider);
   
   return (
     <div className="relative mb-12">

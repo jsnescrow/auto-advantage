@@ -93,20 +93,29 @@ const FormPage: React.FC = () => {
       sessionStorage.setItem('formData', JSON.stringify(formState));
       console.log('Form data stored in sessionStorage:', formState);
       
+      // Clear any existing providers to prevent showing stale data
+      sessionStorage.removeItem('insuranceProviders');
+      
       // Fetch providers data
       const response = await fetchWithRetry(formState, 3, 1000);
       console.log('API response:', response);
       
-      if (response.success && response.providers) {
+      if (response.success && response.providers && response.providers.length > 0) {
         console.log('Providers returned from API:', response.providers);
+        
+        // Re-store providers to ensure they're properly saved
+        sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
         
         // Determine which results page to show based on the API response
         if (response.useAlternateResults) {
+          console.log('Navigating to alternate results page (/results2)');
           navigate('/results2');
         } else {
+          console.log('Navigating to standard results page (/results)');
           navigate('/results');
         }
       } else {
+        console.error('No valid providers returned from API');
         toast.error('No insurance providers found. Please try different criteria.');
         setIsLoading(false);
       }

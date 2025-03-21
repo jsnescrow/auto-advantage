@@ -37,6 +37,7 @@ export const fetchWithRetry = async (
     try {
       // Simulate API call
       console.log(`Attempt ${retries + 1}: Fetching data...`);
+      console.log('Form data being sent:', formData);
       
       // For testing, make this always succeed
       const success = true;
@@ -44,11 +45,32 @@ export const fetchWithRetry = async (
       if (success) {
         console.log('Data fetch successful.');
         
-        // Mock insurance providers data - create exactly 3 providers as required
+        // Mock insurance providers data - create exactly 3 providers
         const providers: Provider[] = [
-          { id: '1', name: 'Insurance Provider A', cpc: 7.50, rank: '1', url: 'https://example.com/provider-a' },
-          { id: '2', name: 'Insurance Provider B', cpc: 5.25, rank: '2', url: 'https://example.com/provider-b' },
-          { id: '3', name: 'Insurance Provider C', cpc: 4.75, rank: '3', url: 'https://example.com/provider-c' },
+          { 
+            id: '1', 
+            name: 'AAA Insurance', 
+            cpc: 7.50, 
+            rank: 1, 
+            url: 'https://example.com/provider-a',
+            rate: 'From $89/month'
+          },
+          { 
+            id: '2', 
+            name: 'Progressive', 
+            cpc: 5.25, 
+            rank: 2, 
+            url: 'https://example.com/provider-b',
+            rate: 'From $95/month'
+          },
+          { 
+            id: '3', 
+            name: 'Geico', 
+            cpc: 4.75, 
+            rank: 3, 
+            url: 'https://example.com/provider-c',
+            rate: 'From $102/month'
+          },
         ];
         
         // Check CPC value of the top provider to determine which results page to show
