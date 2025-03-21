@@ -128,10 +128,13 @@ export default {
 				},
 				'spin-slow': {
 					'0%': {
-						transform: 'rotate(0deg)'
+						transform: 'scale(1)'
+					},
+					'50%': {
+						transform: 'scale(1.05)'
 					},
 					'100%': {
-						transform: 'rotate(360deg)'
+						transform: 'scale(1)'
 					}
 				},
 				'slide-in': {
@@ -157,7 +160,7 @@ export default {
 				'fade-in': 'fade-in 0.5s ease-out forwards',
 				'fade-out': 'fade-out 0.5s ease-out forwards',
 				'pulse-slow': 'pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-				'spin-slow': 'spin-slow 3s linear infinite',
+				'spin-slow': 'spin-slow 2s ease-in-out infinite',
 				'slide-in': 'slide-in 0.3s ease-out forwards',
 				'slide-out': 'slide-out 0.3s ease-out forwards'
 			}

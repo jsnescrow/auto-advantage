@@ -64,22 +64,24 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
             </div>
             
             <div className="flex-shrink-0">
-              <div className={isTopChoice ? "relative" : ""}>
+              {isTopChoice ? (
+                <div className="relative">
+                  <Button
+                    className="bg-brand-500 hover:bg-brand-600 text-white font-medium relative z-10"
+                    onClick={() => window.open(provider.url, '_blank')}
+                  >
+                    VIEW RATES
+                  </Button>
+                  <span className="absolute inset-0 rounded-md animate-spin-slow bg-brand-500/10"></span>
+                </div>
+              ) : (
                 <Button
-                  className={cn(
-                    "text-white font-medium",
-                    isTopChoice 
-                      ? "bg-brand-500 hover:bg-brand-600 z-10 relative" 
-                      : "bg-gray-600 hover:bg-gray-700"
-                  )}
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-medium"
                   onClick={() => window.open(provider.url, '_blank')}
                 >
                   VIEW RATES
                 </Button>
-                {isTopChoice && (
-                  <span className="absolute inset-0 rounded-md animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] bg-brand-500/60"></span>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
