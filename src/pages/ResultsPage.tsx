@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import ResultCard from '@/components/ResultCard';
 import FormCard from '@/components/FormCard';
-import { Button } from '@/components/ui/button';
 import { useFormContext } from '@/context/FormContext';
 import { Provider } from '@/utils/api';
 
@@ -34,11 +33,6 @@ const ResultsPage: React.FC = () => {
     
     return () => clearTimeout(timer);
   }, []);
-
-  const handleStartOver = () => {
-    resetForm();
-    navigate('/');
-  };
 
   if (loading) {
     return (
@@ -103,16 +97,6 @@ const ResultsPage: React.FC = () => {
                   rank={index + 1}
                 />
               ))}
-              
-              <div className="text-center mt-12">
-                <Button
-                  onClick={handleStartOver}
-                  variant="outline"
-                  className="bg-white/10 hover:bg-white/20 text-white border-white/20"
-                >
-                  Compare More Providers
-                </Button>
-              </div>
             </div>
           ) : (
             <FormCard className="text-center py-12 animate-fade-in">
@@ -123,12 +107,15 @@ const ResultsPage: React.FC = () => {
               <p className="text-gray-600 mb-8">
                 We couldn't find any insurance providers that match your criteria. Try adjusting your information to see more options.
               </p>
-              <Button 
-                onClick={handleStartOver}
-                className="bg-brand-500 hover:bg-brand-600 text-white"
+              <button 
+                onClick={() => {
+                  resetForm();
+                  navigate('/');
+                }}
+                className="bg-brand-500 hover:bg-brand-600 text-white py-2 px-4 rounded-md font-medium"
               >
                 Start Over
-              </Button>
+              </button>
             </FormCard>
           )}
         </div>

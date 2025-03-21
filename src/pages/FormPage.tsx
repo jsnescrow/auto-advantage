@@ -52,16 +52,6 @@ const FormPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [zipError, setZipError] = useState('');
 
-  const fillTestData = () => {
-    setVehicleCount('2');
-    setHomeowner('Yes');
-    setCurrentlyInsured('Yes');
-    setCurrentCarrier('ALLSTATE INSURANCE');
-    setCreditScore('Good');
-    setMilitaryAffiliation('No');
-    setZipCode('15014');
-  };
-
   const handleOptionSelect = (setter: Function, value: any) => {
     setter(value);
     
@@ -481,17 +471,6 @@ const FormPage: React.FC = () => {
           <FormCard className={isMobile ? "p-4" : ""}>
             {renderStep()}
           </FormCard>
-          
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-4 text-center">
-              <button 
-                onClick={fillTestData}
-                className="text-xs text-white/70 hover:text-white underline"
-              >
-                Fill with Test Data
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
