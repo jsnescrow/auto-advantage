@@ -11,8 +11,8 @@ interface ResultCardProps {
     url: string;
     logo?: string;
     id: string;
-    rank?: string;
-    cpc?: string;
+    rank?: string | number;
+    cpc?: string | number;
   };
   rank: number;
   useDirectLink?: boolean;

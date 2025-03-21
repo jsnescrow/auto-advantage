@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -42,6 +43,7 @@ const Results2Page: React.FC = () => {
           rank: '2',
         };
         
+        // Ensure rank is always a string to match ResultCard's expected props
         const topApiProviders = parsedProviders.slice(0, 3).map((provider: Provider, index: number) => ({
           ...provider,
           rank: String(index + 3)
