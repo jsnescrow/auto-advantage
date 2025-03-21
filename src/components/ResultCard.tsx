@@ -26,7 +26,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   };
   
   return (
-    <div className="relative mb-16">
+    <div className="relative mb-20">
       <div className={cn(
         "bg-white rounded-md shadow-sm border overflow-hidden transition-all duration-300",
         isTopChoice 
@@ -75,7 +75,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
               </div>
             </div>
             
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 mb-4">
               {isTopChoice ? (
                 <Button
                   className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 animate-pulse-slow"
