@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 // Define interfaces for the API request and response
@@ -88,7 +89,7 @@ export const formatRequestData = (formState: any): ApiRequestData => {
       ni_ref: currentUrl,
       ni_lp_url: currentUrl,
       inventory_type: "thankyoupage",
-      ni_publisher_postback: "server-to-server postback url"
+      ni_publisher_postback: "https://n8n.f4growth.co/webhook-test/quinstreet-postback-prod-v1"
     },
     contact: {
       zip: formState.zipCode,
