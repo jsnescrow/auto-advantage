@@ -1,11 +1,11 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type CreditScoreType = 'Excellent' | 'Good' | 'Fair' | 'Poor';
-export type YesNoType = 'Yes' | 'No';
-export type VehicleCountType = '1' | '2' | '3+';
+type CreditScoreType = 'Excellent' | 'Good' | 'Fair' | 'Poor';
+type YesNoType = 'Yes' | 'No';
+type VehicleCountType = '1' | '2' | '3+';
 
-export interface FormState {
+interface FormState {
   vehicleCount: VehicleCountType | null;
   homeowner: YesNoType | null;
   currentlyInsured: YesNoType | null;

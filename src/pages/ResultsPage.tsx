@@ -15,41 +15,25 @@ const ResultsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("ResultsPage - Component mounted");
-    
+    // Store formState in sessionStorage for access by the ResultCard component
     if (formState) {
       sessionStorage.setItem('formData', JSON.stringify(formState));
     }
     
-    try {
-      const storedProviders = sessionStorage.getItem('insuranceProviders');
-      console.log("ResultsPage - Raw providers data from sessionStorage:", storedProviders);
-      
-      if (storedProviders) {
+    // Retrieve providers from sessionStorage
+    const storedProviders = sessionStorage.getItem('insuranceProviders');
+    
+    if (storedProviders) {
+      try {
         const parsedProviders = JSON.parse(storedProviders);
-        console.log("ResultsPage - Parsed providers:", parsedProviders);
-        
-        if (Array.isArray(parsedProviders) && parsedProviders.length > 0) {
-          console.log("ResultsPage - Setting providers state with", parsedProviders.length, "items");
-          setProviders(parsedProviders);
-        } else {
-          console.error('Providers data is not a valid array:', parsedProviders);
-          // Navigate back to form if no valid providers
-          setTimeout(() => {
-            navigate('/');
-          }, 2000);
-        }
-      } else {
-        console.error("ResultsPage - No insurance providers found in sessionStorage");
-        // Navigate back to form if no providers
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
+        setProviders(parsedProviders);
+      } catch (error) {
+        console.error('Error parsing providers:', error);
       }
-    } catch (error) {
-      console.error('Error processing providers data:', error);
     }
     
+    // Check for click ID in URL params and store it if present
+    // Look for both 'cid' and 'clickid' parameters
     const urlParams = new URLSearchParams(window.location.search);
     const clickId = urlParams.get('cid') || urlParams.get('clickid');
     if (clickId) {
@@ -57,16 +41,13 @@ const ResultsPage: React.FC = () => {
       console.log("Stored clickId from URL:", clickId);
     }
     
+    // Simulate loading time for a smoother transition
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [formState, navigate]);
-
-  useEffect(() => {
-    console.log("Providers state updated:", providers);
-  }, [providers]);
+  }, [formState]);
 
   if (loading) {
     return (
@@ -117,16 +98,13 @@ const ResultsPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-6">
               Your Top Car Insurance Matches
             </h1>
-            <p className="text-gray-600">
-              We found {providers.length} insurance providers that match your criteria.
-            </p>
           </div>
           
           {providers.length > 0 ? (
             <div className="space-y-6 animate-fade-in mb-12">
               {providers.map((provider, index) => (
                 <ResultCard 
-                  key={provider.id || index} 
+                  key={provider.id} 
                   provider={provider} 
                   rank={index + 1}
                 />

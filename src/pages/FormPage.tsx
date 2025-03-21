@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -92,35 +93,12 @@ const FormPage: React.FC = () => {
       sessionStorage.setItem('formData', JSON.stringify(formState));
       console.log('Form data stored in sessionStorage:', formState);
       
-      // Clear any existing providers to prevent showing stale data
-      sessionStorage.removeItem('insuranceProviders');
-      console.log('Cleared existing providers from sessionStorage');
+      const response = await fetchWithRetry(formState);
       
-      // Force a small delay so any UI updates can happen before the network request
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Fetch providers data with detailed logging
-      console.log('STARTING API CALL to fetch providers...');
-      const response = await fetchWithRetry(formState, 3, 1000);
-      console.log('API CALL COMPLETED with response:', response);
-      
-      if (response.success && response.providers && response.providers.length > 0) {
-        console.log('Success! Providers returned:', response.providers);
-        
-        // Double-check the providers are getting saved
-        const savedProviders = sessionStorage.getItem('insuranceProviders');
-        console.log('Providers in sessionStorage after API call:', savedProviders);
-        
-        // Determine which results page to show based on the API response
-        if (response.useAlternateResults) {
-          console.log('Navigating to alternate results page (/results2)');
-          navigate('/results2');
-        } else {
-          console.log('Navigating to standard results page (/results)');
-          navigate('/results');
-        }
+      if (response.success && response.providers) {
+        sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
+        navigate('/results');
       } else {
-        console.error('No valid providers returned from API');
         toast.error('No insurance providers found. Please try different criteria.');
         setIsLoading(false);
       }

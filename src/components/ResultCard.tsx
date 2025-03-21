@@ -2,18 +2,24 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { trackProviderClick, Provider } from '@/utils/api';
+import { trackProviderClick } from '@/utils/api';
 
 interface ResultCardProps {
-  provider: Provider;
+  provider: {
+    name: string;
+    rate?: string;
+    url: string;
+    logo?: string;
+    id: string;
+    rank?: string;
+    cpc?: string;
+  };
   rank: number;
-  useDirectLink?: boolean;
 }
 
-const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink = false }) => {
+const ResultCard: React.FC<ResultCardProps> = ({ provider, rank }) => {
   const isTopChoice = rank === 1;
   const [visitorCount, setVisitorCount] = useState<number>(0);
-  const [logoError, setLogoError] = useState(false);
   
   useEffect(() => {
     if (isTopChoice) {
@@ -46,32 +52,18 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
   };
   
   const handleProviderClick = (e: React.MouseEvent) => {
-    if (useDirectLink) {
-      // If this is a direct link provider (SmartFinancial or Coverage Professor),
-      // just follow the URL directly without tracking
-      return; // Let the normal link behavior happen
-    }
-    
-    // For API providers, use our tracking system
     e.preventDefault();
     console.log("VIEW RATES button clicked for provider:", provider.name, "with ID:", provider.id);
+    console.log("Provider data for tracking:", { rank: provider.rank, cpc: provider.cpc });
     
     // Get zip code from sessionStorage
     const formData = sessionStorage.getItem('formData');
     const zipCode = formData ? JSON.parse(formData).zipCode : '';
+    console.log("Using zip code for tracking:", zipCode);
     
     // Track the click and then navigate - this will now trigger the postback with all data
     trackProviderClick(provider, zipCode);
   };
-  
-  const handleImageError = () => {
-    console.log(`Image failed to load for provider: ${provider.name}`);
-    setLogoError(true);
-  };
-  
-  // Use a fallback image URL that's guaranteed to work
-  const fallbackImageUrl = 'https://placehold.co/200x200/EAEAEA/999999?text=' + 
-    encodeURIComponent(provider.name.substring(0, 2).toUpperCase());
   
   return (
     <div className="relative mb-12">
@@ -103,13 +95,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
                 "flex-shrink-0 w-20 h-20 rounded-md flex items-center justify-center p-2",
                 "bg-white border border-gray-100"
               )}>
-                {!logoError ? (
-                  <img 
-                    src={provider.logo || fallbackImageUrl} 
-                    alt={provider.name} 
-                    className="max-w-full max-h-full object-contain" 
-                    onError={handleImageError}
-                  />
+                {provider.logo ? (
+                  <img src={provider.logo} alt={provider.name} className="max-w-full max-h-full object-contain" />
                 ) : (
                   <div className="text-xl font-bold text-brand-500">
                     {provider.name.substring(0, 2).toUpperCase()}
@@ -127,41 +114,23 @@ const ResultCard: React.FC<ResultCardProps> = ({ provider, rank, useDirectLink =
               </div>
             </div>
             
-            <div className="w-full md:w-auto flex-shrink-0">
-              {useDirectLink ? (
-                <a 
-                  href={provider.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    "w-full md:w-auto inline-flex items-center justify-center rounded-md text-sm font-medium",
-                    "transition-colors focus-visible:outline-none focus-visible:ring-2",
-                    "focus-visible:ring-ring focus-visible:ring-offset-2",
-                    "bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 py-2",
-                    isTopChoice ? "relative overflow-hidden group" : ""
-                  )}
-                >
-                  VIEW RATES
-                  {isTopChoice && (
-                    <div className="absolute inset-0 overflow-hidden">
-                      <div className="absolute inset-0 w-1/2 bg-white/20 transform -translate-x-full animate-shimmer-smooth"></div>
-                    </div>
-                  )}
-                </a>
-              ) : (
+            <div className="flex-shrink-0 mb-6">
+              {isTopChoice ? (
                 <Button
-                  className={cn(
-                    "w-full md:w-auto bg-brand-500 hover:bg-brand-600 text-white font-medium",
-                    isTopChoice ? "px-6 relative overflow-hidden group" : ""
-                  )}
+                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium px-6 relative overflow-hidden group"
                   onClick={handleProviderClick}
                 >
                   VIEW RATES
-                  {isTopChoice && (
-                    <div className="absolute inset-0 overflow-hidden">
-                      <div className="absolute inset-0 w-1/2 bg-white/20 transform -translate-x-full animate-shimmer-smooth"></div>
-                    </div>
-                  )}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute inset-0 w-1/2 bg-white/20 transform -translate-x-full animate-shimmer-smooth"></div>
+                  </div>
+                </Button>
+              ) : (
+                <Button
+                  className="bg-brand-500 hover:bg-brand-600 text-white font-medium"
+                  onClick={handleProviderClick}
+                >
+                  VIEW RATES
                 </Button>
               )}
             </div>

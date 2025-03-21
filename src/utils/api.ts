@@ -1,184 +1,351 @@
+import { toast } from "sonner";
 
-import { FormState } from '@/context/FormContext';
+// Define interfaces for the API request and response
+interface TrackingData {
+  ni_ad_client: string;
+  testing: string;
+  ni_zc: string;
+  ip: string;
+  ua: string;
+  ni_ref: string;
+  ni_lp_url: string;
+  inventory_type: string;
+  ni_publisher_postback: string;
+}
+
+interface ContactData {
+  zip: string;
+  homeowner: string;
+  military_affiliation: string;
+}
+
+interface CurrentInsuranceData {
+  currently_insured: string;
+  carrier: string | null;
+}
+
+interface IndividualData {
+  relation_to_applicant: string;
+  self_credit_rating: string;
+}
+
+interface ApiRequestData {
+  tracking: TrackingData;
+  contact: ContactData;
+  current_insurance: CurrentInsuranceData;
+  vehicles: Array<Record<string, never>>;
+  individuals: IndividualData[];
+}
+
+export interface ListingItem {
+  rank: string;
+  title: string;
+  displayname: string;
+  clickurl: string;
+  logo?: string;
+}
 
 export interface Provider {
   id: string;
   name: string;
-  cpc?: string | number;
-  rank?: string | number;
+  logo?: string;
   rate?: string;
   url: string;
-  logo?: string;
+  rank?: string;
+  cpc?: string;
 }
 
-export const trackProviderClick = (provider: Provider, zipCode: string) => {
-  // Log the click for tracking
-  console.log(`Tracking click for provider: ${provider.name}`);
-  console.log(`Provider data: ID=${provider.id}, Rank=${provider.rank}, CPC=${provider.cpc}`);
-  console.log(`User zip code: ${zipCode}`);
-  
-  // In a real implementation, this would send data to a tracking endpoint
-  // For now, just open the URL after a short delay to simulate the tracking call
-  setTimeout(() => {
-    window.open(provider.url, '_blank');
-  }, 100);
-  
-  return true;
+interface ApiResponseData {
+  success: boolean;
+  providers?: Provider[];
+  error?: string;
+  rawResponse?: any;
+}
+
+// Map form values to API expected values
+const mapYesNoToValue = (value: 'Yes' | 'No'): string => {
+  return value === 'Yes' ? '1' : '0';
 };
 
-export const fetchWithRetry = async (
-  formData: any,
-  maxRetries: number = 3,
-  retryDelay: number = 1000
-) => {
-  console.log('Starting API request process with form data:', formData);
-  
-  // Remove any existing data to avoid confusion
-  sessionStorage.removeItem('insuranceProviders');
-  
-  let retries = 0;
-  let success = false;
-  let responseData = null;
-  
-  // Use a CORS proxy service to avoid CORS issues if that's the problem
-  // const apiUrl = 'https://api.findinsuranceoffers.com/v1/insurance/auto';
-  const apiUrl = 'https://cors-anywhere.herokuapp.com/https://api.findinsuranceoffers.com/v1/insurance/auto';
-  
-  // Log console message to confirm function is actually executing
-  console.log('⚠️ FETCH REQUEST STARTED - Check Network Tab Now ⚠️');
+const mapVehicleCount = (value: string): number => {
+  if (value === '1') return 1;
+  if (value === '2') return 2;
+  return 3; // For "3+"
+};
 
-  // Force a dummy fetch request to see if network tab is working
+// Format the request data based on form state
+export const formatRequestData = (formState: any): ApiRequestData => {
+  const vehicleCount = mapVehicleCount(formState.vehicleCount);
+  const vehicles = Array(vehicleCount).fill({});
+  
+  const currentUrl = window.location.href;
+
+  return {
+    tracking: {
+      ni_ad_client: "701117",
+      testing: "1",
+      ni_zc: formState.zipCode,
+      ip: "[AUTO_DETECT]", // This will be auto-detected by the API
+      ua: "[AUTO_DETECT]", // This will be auto-detected by the API
+      ni_ref: currentUrl,
+      ni_lp_url: currentUrl,
+      inventory_type: "thankyoupage",
+      ni_publisher_postback: "https://n8n.f4growth.co/webhook-test/quinstreet-postback-prod-v1"
+    },
+    contact: {
+      zip: formState.zipCode,
+      homeowner: mapYesNoToValue(formState.homeowner),
+      military_affiliation: mapYesNoToValue(formState.militaryAffiliation)
+    },
+    current_insurance: {
+      currently_insured: mapYesNoToValue(formState.currentlyInsured),
+      carrier: formState.currentlyInsured === 'Yes' ? formState.currentCarrier : null
+    },
+    vehicles,
+    individuals: [
+      {
+        relation_to_applicant: "Self",
+        self_credit_rating: formState.creditScore
+      }
+    ]
+  };
+};
+
+// Function to trigger the postback
+export const triggerPostback = async (provider: Provider, formData: any, clickId: string | null): Promise<boolean> => {
   try {
-    await fetch('https://jsonplaceholder.typicode.com/todos/1');
-    console.log('Test fetch completed successfully');
-  } catch (e) {
-    console.error('Test fetch failed:', e);
+    const postbackUrl = "https://n8n.f4growth.co/webhook-test/quinstreet-postback-prod-v1";
+    
+    // Add all the requested fields to the postback
+    const params = new URLSearchParams({
+      // From web page - using "clickid" (lowercase) instead of "clickId"
+      clickid: clickId || "",
+      
+      // From API response
+      provider_id: provider.id,
+      provider_name: provider.name,
+      rank: provider.rank || "",
+      cpc: provider.cpc || "",
+      
+      // From form data
+      insured_status: formData.currentlyInsured || "",
+      current_insurer: formData.currentCarrier || "",
+      homeowner_status: formData.homeowner || "",
+      zip_code: formData.zipCode || "",
+      credit_score: formData.creditScore || "",
+      
+      // Additional tracking info
+      ni_ad_client: "701117",
+      timestamp: new Date().toISOString()
+    });
+    
+    const fullUrl = `${postbackUrl}?${params.toString()}`;
+    console.log("Triggering postback with complete data:", fullUrl);
+    
+    const response = await fetch(fullUrl, {
+      method: "GET",
+      mode: "no-cors"
+    });
+    
+    console.log("Postback triggered successfully with complete data");
+    return true;
+  } catch (error) {
+    console.error("Error triggering postback:", error);
+    return false;
   }
+};
+
+// Function to track conversions when a user clicks on a provider link
+export const trackProviderClick = async (provider: Provider, zipCode: string): Promise<void> => {
+  try {
+    console.log("Tracking provider click:", provider.name, "with ID:", provider.id);
+    
+    // Get the form data from sessionStorage for postback
+    const formDataStr = sessionStorage.getItem('formData');
+    const formData = formDataStr ? JSON.parse(formDataStr) : { zipCode };
+    
+    // Get clickId from URL parameters first, then localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    let clickId = urlParams.get('cid') || urlParams.get('clickid');
+    
+    // If not in URL, try localStorage
+    if (!clickId) {
+      clickId = localStorage.getItem("clickId");
+    }
+    
+    console.log("ClickID found for tracking:", clickId);
+    
+    // Trigger the postback with all required data
+    await triggerPostback(provider, formData, clickId);
+    
+    // If we have a clickId stored, we can use it for conversion tracking
+    if (clickId) {
+      const conversionUrl = `https://n8n.f4growth.co/webhook-test/quinstreet-conversion-v1`;
+      
+      const params = new URLSearchParams({
+        // Using "clickid" (lowercase) consistently
+        clickid: clickId,
+        event: "click",
+        revenue: provider.cpc || "0", // Use the CPC value as revenue if available
+        currency: "USD",
+        provider: provider.name,
+        provider_id: provider.id,
+        zip: zipCode
+      });
+      
+      const fullUrl = `${conversionUrl}?${params.toString()}`;
+      console.log("Tracking conversion:", fullUrl);
+      
+      await fetch(fullUrl, {
+        method: "GET",
+        mode: "no-cors"
+      });
+      
+      console.log("Conversion tracked successfully");
+    } else {
+      console.log("No clickId found, skipping conversion tracking");
+    }
+    
+    // Continue with the original action (opening the URL)
+    window.open(provider.url, '_blank');
+  } catch (error) {
+    console.error("Error tracking conversion:", error);
+    // Still open the URL even if tracking fails
+    window.open(provider.url, '_blank');
+  }
+};
+
+// Transform API response to our Provider format
+const transformApiResponse = (apiResponse: any): Provider[] => {
+  if (!apiResponse?.response?.listingset?.listing || !Array.isArray(apiResponse.response.listingset.listing)) {
+    console.error('Invalid API response format:', apiResponse);
+    return [];
+  }
+
+  return apiResponse.response.listingset.listing.map((item: any) => ({
+    id: item.vendorKey || String(Math.random()),
+    name: item.displayname || item.title || 'Insurance Provider',
+    logo: item.logo || undefined,
+    rate: item.title || undefined,
+    url: item.clickurl || '#',
+    rank: item.rank || "",
+    cpc: item.cpc || ""
+  }));
+};
+
+// Send request to the API
+export const fetchInsuranceQuotes = async (formData: any): Promise<ApiResponseData> => {
+  const apiUrl = 'https://nextinsure.quinstage.com/listingdisplay/listings';
+  const requestData = formatRequestData(formData);
   
-  while (!success && retries < maxRetries) {
-    try {
-      console.log(`API attempt ${retries + 1}/${maxRetries}`);
-      
-      // Format the request body according to what the API expects
-      const requestBody = {
-        zipCode: formData.zipCode,
-        vehicleCount: formData.vehicleCount,
-        homeowner: formData.homeowner === 'Yes',
-        currentlyInsured: formData.currentlyInsured === 'Yes',
-        currentCarrier: formData.currentCarrier || null,
-        creditScore: formData.creditScore?.toLowerCase() || 'good',
-        militaryAffiliation: formData.militaryAffiliation === 'Yes'
-      };
-      
-      console.log('Sending API request with body:', JSON.stringify(requestBody));
-      console.log('Request URL:', apiUrl);
+  console.log('Sending API request:', requestData);
+  
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    });
 
-      // Force the browser to not use cached results
-      const fetchOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-API-Key': 'TQecSzP3TZm3uzvU7SqP9u4aH9vVu7T8',
-          'Origin': window.location.origin,
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        },
-        body: JSON.stringify(requestBody),
-        credentials: 'omit',
-        mode: 'cors',
-        cache: 'no-cache'
-      };
-      
-      console.log('Fetch options:', fetchOptions);
+    if (!response.ok) {
+      console.error('API error:', response.status, response.statusText);
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
 
-      // Create a visible event in the console to help debugging
-      console.time('API Request Duration');
-      
-      // Use the fetch API directly to ensure it appears in network tab
-      const response = await fetch(apiUrl, fetchOptions);
-      
-      console.timeEnd('API Request Duration');
-      console.log('API response status:', response.status);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('API response data:', data);
-        responseData = data;
-        success = true;
-      } else {
-        const errorText = await response.text();
-        console.error(`API Error (${response.status}): ${errorText}`);
-        
-        if (response.status === 400) {
-          console.log('Received 400 error, checking response body for details');
-          try {
-            const errorJson = JSON.parse(errorText);
-            console.log('Parsed error response:', errorJson);
-          } catch (e) {
-            console.log('Could not parse error response as JSON:', errorText);
+    const data = await response.json();
+    console.log('API response:', data);
+    
+    // Store the clickId if it's in the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const clickId = urlParams.get('cid') || urlParams.get('clickid');
+    if (clickId) {
+      localStorage.setItem("clickId", clickId);
+      console.log("Stored clickId:", clickId);
+    }
+    
+    // We've removed the postback trigger from here - it will now only happen on provider click
+    
+    // Transform the response to our expected format
+    const providers = transformApiResponse(data);
+    console.log('Transformed providers:', providers);
+    
+    // If no providers were returned or transformation failed, use dummy data
+    if (providers.length === 0) {
+      console.log('No providers returned, creating dummy data for testing');
+      return {
+        success: true,
+        providers: [
+          {
+            id: '1',
+            name: 'Ultimate Insurance',
+            rate: 'Auto Insurance As Low As *$19*/Mo',
+            url: 'https://www.ultimateinsurance.com',
+          },
+          {
+            id: '2',
+            name: 'Elephant',
+            rate: 'Get an Instant Quote for Elephant',
+            url: 'https://www.savvy.insure/elephant',
+          },
+          {
+            id: '3',
+            name: 'Branch',
+            rate: 'Bundle home & auto insurance with Branch',
+            url: 'https://www.savvy.insure/branch',
           }
-        }
-        
-        retries++;
-        if (retries < maxRetries) {
-          console.log(`Retrying in ${retryDelay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
-        }
+        ],
+        rawResponse: data
+      };
+    }
+    
+    return {
+      success: true,
+      providers,
+      rawResponse: data
+    };
+  } catch (error) {
+    console.error('Error fetching insurance quotes:', error);
+    toast.error('Error fetching quotes. Please try again.');
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
+    };
+  }
+};
+
+// Retry function with exponential backoff
+export const fetchWithRetry = async (
+  formData: any, 
+  maxRetries = 3, 
+  baseDelay = 1000
+): Promise<ApiResponseData> => {
+  let retries = 0;
+  
+  while (retries < maxRetries) {
+    try {
+      const result = await fetchInsuranceQuotes(formData);
+      if (result.success) {
+        return result;
       }
-    } catch (error) {
-      console.error('API request failed with error:', error);
+      
+      // If it's not successful but we haven't reached max retries
       retries++;
-      if (retries < maxRetries) {
-        console.log(`Retrying in ${retryDelay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
-      }
+      const delay = baseDelay * Math.pow(2, retries - 1);
+      console.log(`Retry attempt ${retries}/${maxRetries} in ${delay}ms`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    } catch (error) {
+      retries++;
+      const delay = baseDelay * Math.pow(2, retries - 1);
+      console.log(`Error, retry attempt ${retries}/${maxRetries} in ${delay}ms`);
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
   
-  if (!success) {
-    console.error('All API attempts failed');
-    
-    // Instead of using fake data, let's provide a clear error message
-    // and return an empty array
-    return { 
-      success: false, 
-      providers: [], 
-      useAlternateResults: false 
-    };
-  }
-  
-  // Process the API response
-  const listings = responseData?.listing || [];
-  console.log(`Processing ${listings.length} providers from API response`);
-  
-  const providers: Provider[] = listings.map((item: any, index: number) => ({
-    id: item.vendorKey || String(index + 1),
-    name: item.displayname || item.company || 'Insurance Provider',
-    cpc: item.cpc || '0.00',
-    rank: item.rank || String(index + 1),
-    rate: item.title || 'Contact for rates',
-    url: item.clickUrl || item.img_pixel || '#',
-    logo: item.logo || ''
-  }));
-  
-  console.log('Transformed providers from API data:', providers);
-  
-  // Store the providers in sessionStorage for use in the results pages
-  sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
-  console.log('Stored API providers in sessionStorage:', providers);
-  
-  // Check CPC value of the top provider to determine which results page to show
-  const topProviderCpc = typeof providers[0]?.cpc === 'number' 
-    ? providers[0].cpc 
-    : parseFloat(String(providers[0]?.cpc || '0').replace('$', ''));
-    
-  const shouldUseAlternateResults = topProviderCpc < 6;
-  
-  return { 
-    success: true, 
-    providers: providers,
-    useAlternateResults: shouldUseAlternateResults
+  // If we've reached max retries
+  return {
+    success: false,
+    error: 'Maximum retries reached. Please try again later.'
   };
 };
