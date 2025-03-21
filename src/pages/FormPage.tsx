@@ -94,17 +94,19 @@ const FormPage: React.FC = () => {
       
       // Clear any existing providers to prevent showing stale data
       sessionStorage.removeItem('insuranceProviders');
+      console.log('Cleared existing providers from sessionStorage');
       
       // Fetch providers data
+      console.log('Calling fetchWithRetry with form data:', formState);
       const response = await fetchWithRetry(formState, 3, 1000);
-      console.log('FULL API response:', response);
+      console.log('API response received:', response);
       
       if (response.success && response.providers && response.providers.length > 0) {
-        console.log('RECEIVED PROVIDERS from API:', JSON.stringify(response.providers));
+        console.log('Providers returned from API:', response.providers);
         
         // Double-check the providers are getting saved
         const savedProviders = sessionStorage.getItem('insuranceProviders');
-        console.log('SAVED PROVIDERS in sessionStorage:', savedProviders);
+        console.log('Providers in sessionStorage after API call:', savedProviders);
         
         // Determine which results page to show based on the API response
         if (response.useAlternateResults) {
@@ -525,3 +527,4 @@ const FormPage: React.FC = () => {
 };
 
 export default FormPage;
+

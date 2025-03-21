@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -14,27 +15,39 @@ const ResultsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("ResultsPage - Component mounted");
+    
     if (formState) {
       sessionStorage.setItem('formData', JSON.stringify(formState));
     }
     
-    const storedProviders = sessionStorage.getItem('insuranceProviders');
-    
-    if (storedProviders) {
-      try {
+    try {
+      const storedProviders = sessionStorage.getItem('insuranceProviders');
+      console.log("ResultsPage - Raw providers data from sessionStorage:", storedProviders);
+      
+      if (storedProviders) {
         const parsedProviders = JSON.parse(storedProviders);
-        console.log("ResultsPage - Loaded providers from sessionStorage:", parsedProviders);
+        console.log("ResultsPage - Parsed providers:", parsedProviders);
         
         if (Array.isArray(parsedProviders) && parsedProviders.length > 0) {
+          console.log("ResultsPage - Setting providers state with", parsedProviders.length, "items");
           setProviders(parsedProviders);
         } else {
           console.error('Providers data is not a valid array:', parsedProviders);
+          // Navigate back to form if no valid providers
+          setTimeout(() => {
+            navigate('/');
+          }, 2000);
         }
-      } catch (error) {
-        console.error('Error parsing providers from sessionStorage:', error);
+      } else {
+        console.error("ResultsPage - No insurance providers found in sessionStorage");
+        // Navigate back to form if no providers
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
       }
-    } else {
-      console.warn("ResultsPage - No insurance providers found in sessionStorage");
+    } catch (error) {
+      console.error('Error processing providers data:', error);
     }
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -49,10 +62,10 @@ const ResultsPage: React.FC = () => {
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [formState]);
+  }, [formState, navigate]);
 
   useEffect(() => {
-    console.log("Current providers state in ResultsPage:", providers);
+    console.log("Providers state updated:", providers);
   }, [providers]);
 
   if (loading) {
@@ -113,7 +126,7 @@ const ResultsPage: React.FC = () => {
             <div className="space-y-6 animate-fade-in mb-12">
               {providers.map((provider, index) => (
                 <ResultCard 
-                  key={provider.id} 
+                  key={provider.id || index} 
                   provider={provider} 
                   rank={index + 1}
                 />
