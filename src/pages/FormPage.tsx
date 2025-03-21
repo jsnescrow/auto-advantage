@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -92,12 +93,19 @@ const FormPage: React.FC = () => {
       sessionStorage.setItem('formData', JSON.stringify(formState));
       console.log('Form data stored in sessionStorage:', formState);
       
-      // Update the fetchWithRetry call to include the required arguments
+      // Fetch providers data
       const response = await fetchWithRetry(formState, 3, 1000);
+      console.log('API response:', response);
       
       if (response.success && response.providers) {
-        sessionStorage.setItem('insuranceProviders', JSON.stringify(response.providers));
-        navigate('/results');
+        console.log('Providers returned from API:', response.providers);
+        
+        // Determine which results page to show based on the API response
+        if (response.useAlternateResults) {
+          navigate('/results2');
+        } else {
+          navigate('/results');
+        }
       } else {
         toast.error('No insurance providers found. Please try different criteria.');
         setIsLoading(false);
@@ -508,4 +516,3 @@ const FormPage: React.FC = () => {
 };
 
 export default FormPage;
-

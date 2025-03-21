@@ -38,13 +38,13 @@ export const fetchWithRetry = async (
       // Simulate API call
       console.log(`Attempt ${retries + 1}: Fetching data...`);
       
-      // Simulate different outcomes (success or failure)
-      const success = Math.random() > 0.2; // 80% chance of success
+      // For testing, make this always succeed
+      const success = true;
       
       if (success) {
         console.log('Data fetch successful.');
         
-        // Mock insurance providers data - only providing 3 providers as required
+        // Mock insurance providers data - create exactly 3 providers as required
         const providers: Provider[] = [
           { id: '1', name: 'Insurance Provider A', cpc: 7.50, rank: '1', url: 'https://example.com/provider-a' },
           { id: '2', name: 'Insurance Provider B', cpc: 5.25, rank: '2', url: 'https://example.com/provider-b' },
@@ -60,6 +60,7 @@ export const fetchWithRetry = async (
         
         // Store the providers in sessionStorage for use in the results pages
         sessionStorage.setItem('insuranceProviders', JSON.stringify(providers));
+        console.log('Stored providers in sessionStorage:', providers);
         
         return { 
           success: true, 

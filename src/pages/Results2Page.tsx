@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -26,36 +25,39 @@ const Results2Page: React.FC = () => {
       try {
         const parsedProviders = JSON.parse(storedProviders);
         console.log("Results2Page - Loaded providers from sessionStorage:", parsedProviders);
-        setApiProviders(parsedProviders);
         
-        // Create the direct link providers
-        const smartFinancial: Provider = {
-          id: 'smart-financial',
-          name: 'Smart Financial',
-          url: 'https://smartfinancial.com',
-          rate: 'Get the Best Auto Insurance Rates Today',
-          rank: '1',
-        };
-        
-        const coverageProfessor: Provider = {
-          id: 'coverage-professor',
-          name: 'Coverage Professor',
-          url: 'https://coverageprofessor.com',
-          rate: 'Save Up to 40% on Auto Insurance',
-          rank: '2',
-        };
-        
-        // Get the top 3 API providers and adjust their rank
-        const topApiProviders = parsedProviders.slice(0, 3).map((provider: Provider, index: number) => ({
-          ...provider,
-          rank: String(index + 3)
-        }));
-        
-        // Combine direct link providers with API providers
-        const combinedProviders = [smartFinancial, coverageProfessor, ...topApiProviders];
-        setProviders(combinedProviders);
+        if (Array.isArray(parsedProviders) && parsedProviders.length > 0) {
+          setApiProviders(parsedProviders);
+          
+          const smartFinancial: Provider = {
+            id: 'smart-financial',
+            name: 'Smart Financial',
+            url: 'https://smartfinancial.com',
+            rate: 'Get the Best Auto Insurance Rates Today',
+            rank: '1',
+          };
+          
+          const coverageProfessor: Provider = {
+            id: 'coverage-professor',
+            name: 'Coverage Professor',
+            url: 'https://coverageprofessor.com',
+            rate: 'Save Up to 40% on Auto Insurance',
+            rank: '2',
+          };
+          
+          const adjustedApiProviders = parsedProviders.map((provider: Provider, index: number) => ({
+            ...provider,
+            rank: String(index + 3)
+          }));
+          
+          const combinedProviders = [smartFinancial, coverageProfessor, ...adjustedApiProviders];
+          setProviders(combinedProviders);
+          console.log("Results2Page - Combined providers:", combinedProviders);
+        } else {
+          console.error('Providers data is not a valid array:', parsedProviders);
+        }
       } catch (error) {
-        console.error('Error parsing providers:', error);
+        console.error('Error parsing providers from sessionStorage:', error);
       }
     } else {
       console.warn("Results2Page - No insurance providers found in sessionStorage");
@@ -74,6 +76,10 @@ const Results2Page: React.FC = () => {
     
     return () => clearTimeout(timer);
   }, [formState]);
+
+  useEffect(() => {
+    console.log("Current providers state in Results2Page:", providers);
+  }, [providers]);
 
   if (loading) {
     return (
@@ -124,6 +130,9 @@ const Results2Page: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-6">
               Your Top Car Insurance Matches
             </h1>
+            <p className="text-gray-600">
+              We found {providers.length} insurance providers that match your criteria.
+            </p>
           </div>
           
           {providers.length > 0 ? (

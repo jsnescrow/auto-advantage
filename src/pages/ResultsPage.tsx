@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
@@ -25,9 +24,14 @@ const ResultsPage: React.FC = () => {
       try {
         const parsedProviders = JSON.parse(storedProviders);
         console.log("ResultsPage - Loaded providers from sessionStorage:", parsedProviders);
-        setProviders(parsedProviders);
+        
+        if (Array.isArray(parsedProviders) && parsedProviders.length > 0) {
+          setProviders(parsedProviders);
+        } else {
+          console.error('Providers data is not a valid array:', parsedProviders);
+        }
       } catch (error) {
-        console.error('Error parsing providers:', error);
+        console.error('Error parsing providers from sessionStorage:', error);
       }
     } else {
       console.warn("ResultsPage - No insurance providers found in sessionStorage");
@@ -46,6 +50,10 @@ const ResultsPage: React.FC = () => {
     
     return () => clearTimeout(timer);
   }, [formState]);
+
+  useEffect(() => {
+    console.log("Current providers state in ResultsPage:", providers);
+  }, [providers]);
 
   if (loading) {
     return (
@@ -96,6 +104,9 @@ const ResultsPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-800 mb-6">
               Your Top Car Insurance Matches
             </h1>
+            <p className="text-gray-600">
+              We found {providers.length} insurance providers that match your criteria.
+            </p>
           </div>
           
           {providers.length > 0 ? (
